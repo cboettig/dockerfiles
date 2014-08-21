@@ -1,0 +1,110 @@
+---
+layout: preprint
+title: "An introduction to Docker for reproducible research and collaboration"
+author: 
+  - name: Carl Boettiger
+    affiliation: cstar
+    email: cboettig(at)gmail.com
+    footnote: Corresponding author
+address: 
+  - code: cstar
+    address: | 
+      Center for Stock Assessment Research,
+      110 Shaffer Rd,
+      Santa Cruz, CA 95050, USA 
+abstract: | 
+          Write the abstract of the paper here
+
+
+bibliography: components/references.bib
+csl: components/ecology.csl
+documentclass: components/elsarticle
+
+output: 
+  pdf_document:
+    template: components/elsarticle.latex
+    keep_tex: true
+    fig_caption: true
+---
+
+
+
+```{r caching, include=FALSE}
+library("methods")
+library("knitr")
+basename <- "manuscript"
+opts_chunk$set(fig.path = paste("components/figure/", basename, "-", sep=""),
+               cache.path = paste("components/cache/", basename, "/", sep=""))
+opts_chunk$set(cache = 2)
+opts_chunk$set(tidy=FALSE, warning=FALSE, message=FALSE, 
+               comment = NA, verbose = TRUE, echo=FALSE)
+
+```
+
+
+```{r libraries, include=FALSE, cache = FALSE}
+library("rmarkdown")
+```
+
+Wouldn't it be nice if you could just revert your computer to how it was an hour ago or a day ago when everything was still working?  Wouldn't it be nice if your collaborators could be running an identical computer environment to your own? 
+
+# Reproducible computational research and the challenge of software environments
+
+- Reproducible research is an important issue
+- Computational research should in principle be the least difficult to make completely reproducible, but in practice this is not the case (see this entire special issue). 
+- Computational research relies on an ever more complex set of software and dependencies for that software
+- These dependencies frequently frustrate reproducibility (see Titus study on failing to install xx% of research software, etc, NESCENT reproducibility study, etc)
+
+# Typical solution approaches
+
+- Documentation
+- Standard environments
+- Virtual machines & Cloud computing
+
+# Challenges with common approaches
+
+
+
+# Emerging approaches: DevOpts
+
+- DevOpts: Scripting your environment
+- Vagrant
+
+
+
+# Docker
+
+- Introduction and hype
+
+- Technologies from operating systems research: LXC containers, virtualization of OS, git-like verioning 
+
+
+
+# Using Docker for Reproducible Research 
+
+- Example: 
+
+
+```{r}
+# Read in an external data file 
+# Load some libraries with external dependencies
+# Compute some statistics, plot 
+```
+
+- Interactive use, scripted use (Dockerfiles)
+- Reverting to a previous state
+- Integration with local development environment
+- Integration with cloud computing
+- Transparent & extensible
+- serial and linking containers
+
+- Best practices are still taking shape
+
+# Walking the talk
+
+- This paper is a dynamic document with code integrated into the text.  
+- The computational environment of this paper is provided as a version controlled Docker image
+
+
+
+
