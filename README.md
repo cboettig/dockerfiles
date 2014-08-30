@@ -110,6 +110,12 @@ ssh <head.node.name> nc -q0 <compute.node.name> 22
 ```
 
 
+## CI
+
+- Drone
+- Travis (Can't run Docker on Ubuntu 12.04, kernel too old)
+- Shippable (Can't seem to run Docker on top of Docker)
+
 
 ## Author
 
