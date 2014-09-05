@@ -1,7 +1,7 @@
-image: ubuntu:latest
-#script:
-#  - R --version
-#notify:
-#  email:
-#    recipients:
-#      - cboettig@ropensci.org
+image: cboettig:rstudio
+script:
+  - R --version
+notify:
+  email:
+    recipients:
+      - cboettig@ropensci.org
