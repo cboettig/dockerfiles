@@ -1,4 +1,4 @@
-#image: cboettig/rstudio
+image: ubuntu:latest
 #script:
 #  - R --version
 #notify:
