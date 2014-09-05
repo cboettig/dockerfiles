@@ -34,7 +34,9 @@ Configure users: log into image using nsenter:
 
 then configure users and passwords (including default user):
 
-    useradd -m $USER && echo "$USER:$PASSWORD" | chpasswd
+```
+useradd -m $USER && echo "$USER:$PASSWORD" | chpasswd
+```
 
 Finally, give users ownership over their own home directory
 
