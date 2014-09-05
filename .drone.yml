@@ -1,4 +1,4 @@
-image: cboettig:rstudio
+image: cboettig/rstudio
 script:
   - R --version
 notify:
