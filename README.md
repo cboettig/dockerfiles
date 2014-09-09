@@ -50,7 +50,7 @@ Deploy Drone CI on 8080 (Then visit localhost:8080/install)
 
 Deploy Gitlab on 10080
 
-    docker run --name='gitlab' -it --rm \
+    docker run --name='gitlab' -d \
       -p 10022:22 -p 10080:80 \
       -e 'GITLAB_PORT=10080' -e 'GITLAB_SSH_PORT=10022' \
       sameersbn/gitlab:7.2.1-1
