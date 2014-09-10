@@ -12,8 +12,8 @@ address:
       Center for Stock Assessment Research,
       110 Shaffer Rd,
       Santa Cruz, CA 95050, USA 
-abstract: | 
-          Write the abstract of the paper here
+abstract: |
+  Academic research 
 
 
 bibliography: components/references.bib
@@ -28,23 +28,117 @@ output:
 ---
 
 
-
-```{r caching, include=FALSE}
-library("methods")
-library("knitr")
-basename <- "manuscript"
-opts_chunk$set(fig.path = paste("components/figure/", basename, "-", sep=""),
-               cache.path = paste("components/cache/", basename, "/", sep=""))
-opts_chunk$set(cache = 2)
-opts_chunk$set(tidy=FALSE, warning=FALSE, message=FALSE, 
-               comment = NA, verbose = TRUE, echo=FALSE)
-
-```
+<!--
 
 
-```{r libraries, include=FALSE, cache = FALSE}
-library("rmarkdown")
-```
+Suggested paper topics include, but are not limited to:
+
+  * novel ways to manage systems research artifacts, dependencies, workflows,
+    and data collection
+  * testbeds for repeatable research and/or publishing executable artifacts
+  * "rich publications" that connect papers to software and data
+  * repeatability in distributed and nondeterministic systems
+  * mitigating obstacles to artifact sharing, repeatability, and reproduction
+  * repeatability challenges specific to systems
+  * measurement bias in systems experiments
+  * experiences and outcomes from systems repetition and reproduction studies
+  * improving scientific practice in systems research
+  * incentives for producing and sharing high-quality research artifacts
+
+Papers are expected to present significant results, insights, and/or directions
+for future work, and they are expected to include substantial material that has
+not already been published.
+
+SUBMISSION INSTRUCTIONS
+
+Submissions must be no longer than ten (10) pages; shorter papers are allowed
+and encouraged.  Submissions must be written in English and follow the standard
+formatting guidelines for papers appearing in Operating Systems Review (see
+<http://www.sigops.org/osr.html>).  Papers must be submitted in PDF format via
+the submission web site.  Submitted papers will be reviewed by the guest editor
+and the review committee.  Papers will be evaluated on technical quality,
+originality, relevance, and presentation.  Accepted papers will be published in
+the January 2015 issue of Operating Systems Review.
+
+-->
+
+Reproducible research, and in particular, computational reproducibility,
+has recieved an increasing level of attention throughout the scientific
+community as all steps of the scientific process, from data collection
+and processing, to analyses, visualizations and conclusions depend ever
+more on computation and algorithms.  Though in principle this algorithmic
+dependence should make such research easier to reproduce -- computer codes
+being both more portable and potentially more precise to exchange and run
+than experimental methods -- in practice this has led to an ever larger
+and more complex black box that stands between what was actually done
+and what is described in the literature.  Crucial scientific processes
+such as replicating the results, extending the approach or testing the
+conclusions in other contexts, or even merely installing the software
+used by the original researchers can become immensely time-consuming if
+not impossible.
+
+At the heart of the computational reproducibility challenge is the emmense, 
+complex, diverse, and rapidly changing nature of the computer software 
+ 
+
+It is possible, and indeed often desirable, to tackle this problem
+at a much higher level than that of the operating system itself.
+For instance, it is often sufficient to address these concerns at the
+level of a particular scripting language rather than the level of the
+operating system. Most major scripting languages have dedicated tools for
+handling dependencies and versioning (e.g. Ruby gems, R packages, Python
+eggs, perl modules, javascript node package manager); with some languages
+having the fortune or misfortune to have multiple systems. Though systems
+differ somewhat in their strategies and their effectiveness, all are
+generally vulnerable to changes in their lower-level dependencies (such as
+compilers, C libraries, and so forth) that may differ between platforms.
+More pointedly, researchers whose work is not easily isolated to a single
+such environment but combines tools from different systems (including
+combining those tools used for formatting & visual display, such as
+LaTeX or pandoc, with scripting or analysis tools such as R). Moreover,
+addressing reproducibility at the level of the operating system avoids
+constructing approaches unique to a specific language or tool.
+
+
+ 
+
+Two dominant paradigms have emerged to address these issues so far:
+workflow software and cloud computing on virtual machines.  Here I
+consider how a popular emerging technology, Docker, based on Linux
+containers, offers a third route that addresses pratical and theoretical
+concerns for reproducible research not addressed by either of these
+paradigms.
+
+It is worth observing from the outset that the primary barrier to
+computational reproducibility in many domain sciences has nothing
+to do with the technology discussed here, but stems rather from a
+reluctance to publish the code used to generating the results in the
+first place [@Barnes2010]. Despite extensive evidence to the contrary
+[e.g. @Ince2012], many researchers and journals continue to assume that
+summary descriptions or pseudo-code provide a sufficient description of
+computational methods used in data gathering, processing, simulation,
+visualization, or analysis.  Until such code is available in the first
+place, we cannot even begin to encounter the problems that the approaches
+discussed here set out to solve. As a result, few domain researchers
+may be fully aware of the challenges involved in effectively re-using
+published code.
+
+Yet this coin has two sides: By lowering the barriers
+these barrier to re-use through the appropriate infrastructure first, the research
+community as a whole may be better positioned to take advantage of code 
+sharing practices when they are adopted.  This has cultural implications as well:
+many researchers may be reluctant to publish code today because they fear
+a primarily one-way street: others will have the technical savvy to benefit
+from their hard work, while they may not benefit from the work produced by others.
+Lowering the technical barriers to reuse provides immediate practical benefits
+that make this exchanged into a more balanced, two-way street.  
+
+The issue most domain researchers do not recognize as an issue.  If computational reprod
+
+Before we begin, it is important to distinguish between the nature of the problem we seek to address here and other elements of computationally reproducible research.  While this approach may address some of the same challenges as workflow software, dynamic documents / executable papers and ad hoc packaging systems, it can always been seen to supplement rather than replace such solutions.  A good example comes from dynamic documents, which seek to embed the code required to re-generate the results within the manuscript itself.  
+
+http://doi.ieeecomputersociety.org/10.1109/MCSE.2012.62 
+
 
 Wouldn't it be nice if you could just revert your computer to how it was an hour ago or a day ago when everything was still working?  Wouldn't it be nice if your collaborators could be running an identical computer environment to your own? 
 
@@ -56,6 +150,8 @@ Wouldn't it be nice if you could just revert your computer to how it was an hour
 - These dependencies frequently frustrate reproducibility (see Titus study on failing to install xx% of research software, etc, NESCENT reproducibility study, etc)
 
 # Typical solution approaches
+
+
 
 - Documentation
 - Standard environments
@@ -100,11 +196,27 @@ Wouldn't it be nice if you could just revert your computer to how it was an hour
 
 - Best practices are still taking shape
 
-# Walking the talk
-
-- This paper is a dynamic document with code integrated into the text.  
-- The computational environment of this paper is provided as a version controlled Docker image
 
 
 
+
+My original motivation was more on the research side, primarily from NESCent's reproducibility study and Rich's reproducibility ropensci blog post, where you might recall Docker being discussed in the comments.  
+
+Hilmar highlighted 3 reasons why reproducibility efforts fail even for papers that seem to do the right things: 1) dependency hell frustrating installation, 2) small holes in documentation can be major barriers for "novices" (even if novices are experts in nearby fields and nearby languages), 3) software dependency evolution breaks existing code (code rot). 
+
+Rich highlighted about 4 reasons: 1) dependency hell / incomplete documentation on versions, 2) all the scripts & software for installing managing the 'reproducibility' part of their analysis (travis, etc) were as complex as the analysis itself. (more than half the software dependencies were things like RCurl,  knitr & packrat etc).  3) Running the analysis on Travis CI means it has to finish in 50 minutes, 4) the learning curve for Github + Travis + etc is prohibitive.  
+
+Docker provides a "DevOpts" approach, replacing user documentation on how to install with scripts that handle provisioning.  This pretty much solves Hilmar's #1 & #2.  You can maintain a timestamped binary of the Docker image to address Hilmar's #3. 
+
+Rich's #2 is largely handled by providing an image where this stuff is all set up for you, so it building on the ropensci docker image, you need to add only what is necessary for your actual analysis.  His #3 is addressed bc instead of running on Travis, you can run this locally (on Windows/Mac/Linux) or on a cloud of your choice with as much horsepower as you need.  I think this lowers the learning curve (#4) some, (for instance, you can use git in the usual way but you can also fully interact without knowing git).
+
+My hope is, that instead of the rather giant set-up Rich et al needed, a user could just have their paper as say, an R script or rmarkdown file, develop & run it locally in the docker-ropensci environment, and then anyone having trouble getting it to run in their native R should at least be able to run it in the docker-ropensci environment.  Docker is super-easy to extend: they could make their own minimal Dockerfile like this: https://github.com/ropensci/RNeXML/blob/devel/manuscripts/Dockerfile There's a few other cool things about Docker (The git-like way it handles images etc) too.
+
+
+
+# Acknowledgements
+
+- NSF
+- rOpenSci
+- Dirk Eddlebuettel, Rich FitzJohn, Yihui Xie, Titus Brown, John Stanton-Geddes and others for helpful discussions about reproducibility, virtualization, and Docker that have helped shape this manuscript. 
 
