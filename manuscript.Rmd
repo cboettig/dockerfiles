@@ -1,6 +1,6 @@
 ---
 layout: preprint
-title: "An introduction to Docker for reproducible research and collaboration"
+title: "An introduction to Docker for reproducible research, with examples from the R environment"
 author: 
   - name: Carl Boettiger
     affiliation: cstar
@@ -13,8 +13,7 @@ address:
       110 Shaffer Rd,
       Santa Cruz, CA 95050, USA 
 abstract: |
-  Academic research 
-
+  Docker is a promising solution to 
 
 bibliography: components/references.bib
 csl: components/ecology.csl
@@ -63,10 +62,11 @@ the January 2015 issue of Operating Systems Review.
 -->
 
 Reproducible research has recieved an increasing level of attention
-throughout the scientific community [The Economist 2014]. A all steps
-of the scientific process, from data collection and processing, to
-analyses, visualizations and conclusions depend ever more on computation
-and algorithms, _computational reproducibility_ has recieved particular
+throughout the scientific community (e.g. [Peng 2011], [Nature editorial])
+and the public at large (e.g. [The Economist 2014]). All steps of the
+scientific process, from data collection and processing, to analyses,
+visualizations and conclusions depend ever more on computation and
+algorithms, _computational reproducibility_ has recieved particular
 attention [Merali 2010].  Though in principle this algorithmic dependence
 should make such research easier to reproduce -- computer codes being
 both more portable and potentially more precise to exchange and run
@@ -78,7 +78,8 @@ conclusions in other contexts, or even merely installing the software
 used by the original researchers can become immensely time-consuming if
 not impossible.
 
-## A technical and cultural problem
+
+# A cultural problem
 
 It is worth observing from the outset that the primary barrier to
 computational reproducibility in many domain sciences has nothing
@@ -94,13 +95,44 @@ discussed here set out to solve. As a result, few domain researchers
 may be fully aware of the challenges involved in effectively re-using
 published code.
 
-A lack of requirements or incentives no doubt plays a crucial role
-in discouraging sharing ([Barnes 2010]). Nevertheless, it is easy to
-underestimate the siginficant barriers raised by a lack of familiar,
-intuitive, and widely adopted tools for addressing the challenges of
-computational reproducibility. Surveys and case studies find that a lack
-of time, more than innate opposition to sharing, discourages researchers
-from providing code ([Stodden 2010], [FitzJohn 2014]).
+A lack of requirements or incentives no doubt plays a crucial role in
+discouraging sharing ([Barnes 2010], [Stodden 2013]). Nevertheless,
+it is easy to underestimate the siginficant barriers raised by a lack
+of familiar, intuitive, and widely adopted tools for addressing the
+challenges of computational reproducibility. Surveys and case studies find
+that a lack of time, more than innate opposition to sharing, discourages
+researchers from providing code ([Stodden 2010], [FitzJohn 2014]).
+
+
+# The four technical challenges of computational reproducibility 
+
+By restricting ourselves to studies of where code has been made
+available, we may sidestep for the moment the cultural challenges
+to reproducibility so that we may focus on the technical ones; in
+particular, those challenges for which improved tools and techniques
+rather than merely norms of behavior can contribute substantially to
+improved reproducibility.
+
+Studies focusing on code that has been made available with scientific
+publications regularly find the same common issues that pose substantial
+barriers to reproducing the original results or building on that code
+(e.g. [Lapp 2014], [Garijo 2013], [Gilbert 2012], [Collberg 2014],
+[Brown 2014]), which I attempt to summarize as follows.
+
+<!-- Is this a permitted term? -->
+
+1. **"Dependency Hell"**
+
+
+A recent study by researchers at the University of Arizona found that
+less than 50% of software could even be successfully built or installed
+[Collberg 2014], and in an ongoing effort by other researchers to
+replicate that study [Brown 2014]. Installing or building software
+necessary to run the code in question assumes the ability to recreate
+the computational environment of the original researchers. 
+
+<!-- FIXME more stuff on what this means-->
+
 
 <!-- Time savings. Personal reproducibility. Collaboration. Teaching. --> 
 
@@ -112,11 +144,74 @@ from providing code ([Stodden 2010], [FitzJohn 2014]).
 
 -->
 
-<!-- Operating system - level approach -->
+
+<!-- Omit this? -->
+Differences in numerical evaluation, such as arise in floating point
+arithmetic or computers or even ambiguities in standardized programming
+languages ("order-of-evaluation" problems) can be responsible for
+differing results between or even within the same computational platform
+([Ince 2012]). Such issues make it difficult to restrict the true dependencies
+of the code to higher level environments such as that of a given scripting
+language, indpendent of the underlying OS or even hardware itself.
+
+2.  **Imprecise documentation**
+
+Documentation on how to install and run code associated with published
+research is another frequent barrier to replication.  [Lapp 2014] found
+this impairs a researcher's ability to install and build the software
+necessary, as even small holes in the documentation were found to be
+major barriers, particularly for "novices" (Sensu [Garijo 2013] --
+where novices may be experts in nearby langauages but unfamiliar with
+the package managers and other tools of the language involved). This
+same problem is discussed in [Clark 2014].  Imprecise documentation
+goes well beyond issues of the software environment itself: incomplete
+documentation of parameters involved meant as few as 30% of analyses
+(n=34) using the popular software STRUCTURE could be reporoduced in the
+study of [Gilbert 2012].
+
+
+3.  **Code rot**
+
+Software dependencies are not static elements, but recieve regular
+updates that may fix bugs, add new features or deprecate old features
+(or even entire dependencies themselves).  Any of these changes can
+potentially change the results generated by the code.  As some of these
+changes may indeed resolve valid bugs or earlier problems with underlying
+code, it will often be insufficient to demonstrate that results can be
+reproduced when using the original versions, a problem sometimes known
+as "code rot."  Researchers will want to know if the results are robust
+to the changes. The case studies in [Lapp 2014] provide examples of
+these problems.
+
+4. **Barriers to adoption and reuse in existing solutions**
+
+Technological solutions such as workflow software, virtual machines,
+continuous integration services, and best practices from software
+development would address many of the issues frequently frustrating
+reproducibility. However, researchers face siginificant barriers to entry
+in learning these tools and approaches which are not part of their typical
+curriculum, or lack incentives co-measurate with the effort required
+([Joppa 2013], [FitzJohn 2014]).
+
+Existing proposals to address the challenges 1-3 either involve adopting
+an relatively new workflow that may be foreign to both the researcher and
+their collaborators, as in the case of many workflow software solutions,
+or adopt a relatively black-box approach that cannot be easily extended
+by other researchers, as in the case of virtual machines. 
+
+------------------------------------
+
+<!--
+# Docker 
+
 At the heart of the computational reproducibility challenge is the 
 complexity, diversity, and rapidly changing nature of the computer software
 that underpin such work.
- 
+
+--> 
+
+# The alternatives 
+
 <!-- Current approaches at the Operating Systems level -->
 
 Two dominant paradigms have emerged to address these issues so far:
@@ -131,12 +226,13 @@ scientists, and can be very successful in the communities within which
 they recieve substatianal adoption. Nonetheless, most workflow systems 
 struggle with relatively low total adoption overall ([Gin 2007, Dudley 2013]).
 
-[Dudley 2013] gives several reasons for this: 
+[Dudley 2013] gives several reasons that such comprehensive workflow
+systems have not been more successful:
 
 > (i) efforts are not rewarded by the current academic research and
 funding environment; (ii) commercial software vendors tend to protect
 their markets through proprietary formats and interfaces; (iii)
-investigators naturally tend to want to ‘own’ and control their
+investigators naturally tend to want to 'own' and control their
 research tools; (iv) even the most generalized software will not be
 able to meet the needs of every researcher in a field; and finally (v)
 the need to derive and publish results as quickly as possible precludes
@@ -147,149 +243,200 @@ In short, workflow software expects a new approach to computational research
 In contrast, virtual machines (VMs) offer a far more brute-force approach.  If the goal
 is to reproduce everything as it ran on the researcher's own computer, well 
 then we can just take a snapshot of the entire computer: data, software, 
-operating system and all. 
-
-To make this practical, [Dudley 2013] and [Howe 2012]
+operating system and all. To make this practical, [Dudley 2013] and [Howe 2012]
 propose using virtual machine images that will run on the cloud, such as Amazon's
 EC2 system, which is already based upon this kind of virtualization.
 
 Critics of the use of VMs to support reproducibility highlight that the 
-approach is too much of a black box and ill suited for 
+approach is too much of a black box and thus ill suited for reproducibility [Watson 2012].
+While the approach sidesteps the need to either install or even document the
+dependencies, this also makes it more difficult for other researchers to
+understand, evaluate, or alter those dependencies.  Moreover, other research
+cannot easily build on the virtual machine in a consistent and scalable way. 
+If each study provided it's own virtual machine, any pipeline combining the 
+tools of multiple studies would quickly become impractical or impossible 
+to implement. 
 
 
-Here I consider how a popular emerging technology, Docker, based on
-Linux containers, offers a third route that addresses pratical and
-theoretical concerns for reproducible research not addressed by either
-of these paradigms.
+## A "DevOpts" approach
+
+The problems highlighted here are not unique to academic software, but
+impact software development in general. While the academic research 
+literature has frequently focused on the development of workflow software
+dedicated to particular domains, or otherwise to the use of virtual machines,
+the software development community has recently emphasized a philosophy 
+(rather than a particular tool), known as _Development_ and Systems _Operation_, or more 
+frequently just "DevOpts." The approach is characterized by scripting,
+rather than documenting, a description of the necessary dependencies 
+for software to run, usually from the Operating System (OS) on up. 
 
 
+[Clark 2014] describes the DevOpts approach
+along with both its relevance to reproducible research and examples of
+its use in the academic research context. 
+
+Their paper provides both a consise statement of the problem we
+have already discussed and the solution provided under this banner:
 
 
+> In scientific computing the environment was commonly managed via
+Makfiles & Unix-y hacks, or alternatively with monolithic software
+like Matlab. More recently, centralized package management has provided
+curated tools that work well together. But as more and more essential
+functionality is built out across a variety of systems and languages,
+the value -- and also the difficulty -- of coordinating multiple tools
+continues to increase. Whether we are producing research results or web
+services, it is becoming increasingly essential to set up new languages,
+libraries, databases, and more.
 
 
+> Documentation for complex software environments is stuck between two
+opposing demands. To make things easier on novice users, documentation
+must explain details relevant to factors like different operating
+systems. Alternatively, to save time writing and updating documentation,
+developers like to abstract over such details.
 
+The authors contrast this to the DevOpts approach:
 
+> A DevOps approach to "documenting" an application might consist of
+providing brief descriptions of various install paths, along with scripts
+or "recipes" that automate setup.
 
-Wouldn't it be nice if you could just revert your computer to how it was an hour ago or a day ago when everything was still working?  Wouldn't it be nice if your collaborators could be running an identical computer environment to your own? 
+which elegantly addresses both the demand for simplicity of use (one
+executes a script instead of manually managing the environmental setup)
+and comprehensiveness of implementation. [Clark 2014] are careful to note
+that this is not so much a technological shift as a philosophical one:
 
-# Reproducible computational research and the challenge of software environments
+> The primary shift that's required is not one of new tooling, as most
+developers already have the basic tooling they need. Rather, the needed
+shift is one of philosophy.
 
-- Reproducible research is an important issue
-- Computational research should in principle be the least difficult to make completely reproducible, but in practice this is not the case (see this entire special issue). 
-- Computational research relies on an ever more complex set of software and dependencies for that software
-- These dependencies frequently frustrate reproducibility (see Titus study on failing to install xx% of research software, etc, NESCENT reproducibility study, etc)
+Nevertheless, a growing suite of tools designed explicitly for this
+purpose have rapidly replaced the use of general purpose tools (such
+as Makefiles, bash scripts) to become synonomous with the "DevOpts"
+philosophy.  [Clark 2014] reviews many of these "DevOpts" tools, their
+different roles, and their application in reproducible research.
 
-
-
-## Alternatives and other considerations 
-
-<!-- Package managers -->
-
-It is possible, and indeed often desirable, to tackle this problem
-at a much higher level than that of the operating system itself (e.g. [Ooms 2014]).
-For instance, it is often sufficient to address these concerns at the
-level of a particular scripting language rather than the level of the
-operating system. Most major scripting languages have dedicated tools for
-handling dependencies and versioning (e.g. Ruby gems, R packages, Python
-eggs, perl modules, javascript node package manager); with some languages
-having the fortune or misfortune to have multiple systems. Though systems
-differ somewhat in their strategies and their effectiveness, all are
-generally vulnerable to changes in their lower-level dependencies (such as
-compilers, C libraries, and so forth) that may differ between platforms.
-More pointedly, researchers whose work is not easily isolated to a single
-such environment but combines tools from different systems (including
-combining those tools used for formatting & visual display, such as
-LaTeX or pandoc, with scripting or analysis tools such as R). Moreover,
-addressing reproducibility at the level of the operating system avoids
-constructing approaches unique to a specific language or tool.
-
-<!-- Synergistic with other reproducible-research technology -->
-
-The approaches discussed here should be seen as largely synergistic
-with, rather than an alternative to, other topics in computationally
-reproducible research. For example, consider the dynamic documents
-approach ([Leisch 2002], [Peng 2011], [Xie 2013]), which seek to embed
-the code required to re-generate the results within the manuscript
-itself. This process serves as a way to distribute computational
-code with publications, to ensure that methodological discriptions,
-parameter values, figures, and so forth remain synchronized with the code,
-and to provide a way for other researchers to both tweak the code and
-'execute' the paper to reproduce the results.  While these features
-are very desirable from the perspective of reproducible research,
-they inevitably increase the number of software dependencies involved,
-including those tools that support combining code with text (e.g. [Xie
-2013]) as well as tools merely for the handling the formating and layout
-(e.g. LaTeX, pandoc).  Consequently, such a paper can fail to execute
-successfully for reasons having nothing to do with the computations
-involved in the research, but rather due to software responsible for
-implementing these dynamic features.  This problem is largely resolved by
-providing a consistent development environmment, making the approaches
-discussed here a natural complement to that of dynamic documents.
-A similar argument can be made regarding the use of workflow systems,
-which can introduce additional softare dependencies even as they seek
-to make it easier to work across them.
-
-
-<!-- Cultural sharing practices -->
-We noted at the outset that cultural expecations responsible for a
-lack of code sharing practices in many fields are a far more extensive
-primary barrier to reproducibility than the technical barriers we have
-discussed here. Nevertheless, it may be worth considering how solutions
-to these technical barriers can influence the cultural landscape as well.
-Many researchers may be reluctant to publish code today because they
-fear a it will be primarily a one-way street: more technical savvy
-researchers then themselves can benefit from their hard work, while
-they may not benefit from the work produced by others.  Lowering the
-technical barriers to reuse provides immediate practical benefits
-that make this exchanged into a more balanced, two-way street. Another
-concern is that the difficulty imposed in preparing code to be shared,
-such as providing even semi-adequate documentation or support for other
-users to be able to install and run it in the first place is too high
-[Stodden 2010]. By lowering the barriers these barrier to re-use through
-the appropriate infrastructure first, we may also reduce certain cultural
-barriers to sharing.  
+I focus the remainder of this paper on one of the most recent and rapidly
+growing among these, called Docker, which offers several promising
+developments above and beyond the tools highlighted in [Clark 2014]
+in providing a DevOpts approach to reproducible research. My goal
+in focusing on this example is not to promote a particular solution, 
+but to anchor the discussion of technical solutions to reproducibility
+challenges in concrete examples.
 
 
 
-[Vandewalle 2009]: http://doi.org/10.1109/MSP.2009.932122
-[Merali 2010]: http://doi.org/10.1038/467775a "Computational Science ... error: why scientific programming does not compute"
-[Gil 2007]: http://doi.org/10.1109/MC.2007.421 "Examining the Challenges of Scientific Workflows"
-[Hull 2006]: http://doi.org/10.1093/nar/gkl320 "Taverna: a tool for building and running workflows of services"
-[Altintas 2004]: http://doi.org/10.1109/SSDM.2004.1311241 "Kepler: an extensible system for design and execution of scientific workflows"
-[Howe 2012]: http://doi.org/10.1109/MCSE.2012.62
-[Dudley 2013]: http://doi.org/10.1038/nbt1110-1181 
-[Clark 2014]: https://berkeley.app.box.com/s/w424gdjot3tgksidyyfl
-[Ooms 2013]: http://arxiv.org/abs/1303.2140v2
-[Ooms 2014]: http://arxiv.org/abs/1406.4806
-[Peng 2011]: http://doi.org/10.1126/science.1213847
-[Barnes 2010]: http://doi.org/10.1038/467753a
-[Ince 2012]: http://doi.org/10.1038/nature10836
-[Stodden 2014]: http://doi.org/10.3233/SJI-140818
-[Stodden 2010]: http://doi.org/10.2139/ssrn.1550193
-
-
-
-
-
+<!-- Link on how to install docker -->
+<!-- Examples here are not meant as a tutorial to docker, but 
+rather to illustrate concepts a reader should be able to follow whether 
+or not they have any previous knowledge of docker and its commands -->
 
 # Docker
 
-- Introduction and hype
 
-- Technologies from operating systems research: LXC containers, virtualization of OS, git-like verioning 
+Docker is an open source (Apache Version 2) software platform written in
+the Go programming language. 
+
+Docker builds on many long-familiar technologies from operating
+systems research: LXC containers, virtualization of the OS, and
+a hash-based or git-like verioning and differencing system, among
+others. Researchers familiar with LXC may be tempted to view the Docker
+system as little more than a creative application and marketing of an
+existing technology. However, the Docker approach adds several features
+crucial for its use in reproducible research (adapted from [Docker
+FAQ](https://docs.docker.com/faq/#what-does-docker-add-to-just-plain-lxc)):
+
+- Portable deployment: Docker defines a format for bundling and exchanging
+containers such that they run identically across platforms.
+
+- Automatic builds: Docker defines a format (Dockerfiles) that provide
+a simple, scripted way to construct containers, following the DevOpts
+philosophy.
+
+- Versioning: Docker provides git-like capibilities for tracking changes
+to a container, inspecting the history, metadata, or diff between
+versions, committing versions, rolling back changes, and incremential
+uploads and downloads that send only the differences (like `git push`
+or `git pull`).
+
+- Component reuse: Any container can be used as the base for any other.
+
+- Sharing: Docker provides a public registry (Docker Hub) where any
+user can make images avaialble to any other. (The registry itself is
+also open source so that it can be deployed privately).
+
+Each of these elements have clear implications for reproducible research.
 
 
 
-# Using Docker for Reproducible Research 
-
-- Example: 
 
 
-```{r}
-# Read in an external data file 
-# Load some libraries with external dependencies
-# Compute some statistics, plot 
+
+
+# Using Docker in an R environment 
+
+
+Perhaps the most important feature of a reproducible research tool is
+that it be easy to learn and fit relatively seamlessly into exsiting
+workflow patterns of domain researchers.  As we have seen, this, more
+than any other concern, can explain the relatively low uptake of previously
+proposed solutions.  <!-- too strong? -->
+
+Being a new and unfamiliar tool to most domain scientists, Docker is far
+from immune to the same critique.  Nevertheless, Docker takes us several 
+key steps towards an approach that can be easily adopted in a research 
+context.
+
+Primary among these is the ability to run Docker locally on all major
+operating systems with minimal prior expertise.  On systems not already
+based on the Linux Kernel (such as Mac or Windows clients), this is 
+accomplished through the use of a small VirtualBox-based VM running on
+the host OS called `boot2docker`. 
+
+Local development offers several important advantages in encouraging 
+adoption.
+
+-----
+
+In the R environment, the open source RStudio IDE provides another key component
+in making this system accessible to most domain scientists. Because the RStudio 
+IDE is written completely with standard web languages: javascript, css, and html,
+its web-based client, RStudio-Server, looks and feels identical to its popular 
+desktop IDE.  RStudio Server provides a way to interact with R on a remote environment
+without the latency, X tunnelling, etc typically involved in running R on a remote
+server. 
+
+For our purposes, it provides users a way to interact with R, the filesystem,
+git, text editors, and graphics running on a Docker container.  Users already
+familiar with the popular IDE can thus benefit from the reproduciblity and 
+portability features provided by running R in a container environment without
+having to adapt to a new workflow for managing these things that is usually 
+necessary when moving to a cloud environment. 
+
+RStudio-Server is not the only way to provide a familiar developer environment
+to users working with a development environment running in a container on their
+local computer.  Docker supports the sharing of volumes (directories) between
+the container and the host OS.  This allows a user to rely on the familiar tools
+of the host OS for roles such as text editing, file browsing, or version control,
+while still allowing code execution to occur inside the controlled development 
+environment of the container. In this example, we launch an interactive R console
+in a container that is linked to our current working directory:
+
+
+```bash
+docker run -v $(pwd):/ -it eddelbuettel/docker-ubuntu-r /usr/bin/R
 ```
+
+(Clearly a similar command could be used just as well with interactive
+shells from other languages such as `ipython` or `irb`). The resulting
+system behaves almost identically[^2] to running R on the command line
+of the host OS.
+
+[^2]: External windows, such graphics windows cannot be opened directly from the container in this setup.  Graphics would have to be saved to desk as raster or vector files and viewed on the host OS, until a better solution can be found. RStudio-server is one way around this.  
+
+
+
 
 - Interactive use, scripted use (Dockerfiles)
 - Reverting to a previous state
@@ -302,46 +449,133 @@ barriers to sharing.
 
 
 
-Why computational reproducibility is difficult
-
-Recent studies have highlighted 5 reasons 
-
-1) "Dependency Hell"
-  a) Imprecise documentation. Small holes in the documentation can be major barriers for "novices" (Sensu ..., where novices may still be experts in nearby langauages). 
-  b) Code rot. Dependency evolution breaks existing code 
-
-Solution to this is scripted installations: DevOpts. At the Operating System level!
-
-2) Complexity of existing reproducibility options 
-  a) Virtual Machines
-  b) Workflow software
-  c) Continuous Integration / software development practices
-Barriers to entry / learning
-Barriers to reuse / remix
 
 
+## Docker remix
 
-Docker does 4 new things: 
+The approach of Linux Containers represented by Docker offers a technical
+solution to what is frequently seen as the primary weakness of the
+standard virtual machine approach to reproducibility - reusing and
+remixing elements.  To some extent this is already addressed by the
+"DevOpts" approach of Dockerfiles, providing a scripted description
+of the environment that can be tweaked and altered, but also includes 
+something much more fundamental to Docker.  
+
+The challenge to reusing virtual machines can be summarized as "you can't install an image for every pipeline you want..." [Watson 2012]. In contrast, this is exactly how Docker containers are designed to work.
+There are at least two ways in which Docker supports this kind
+of extensibility.
+
+
+First, Docker makes it immensely easy to build one container on top of
+another.  Rather than copy a Dockerfile and then start adding more lines
+to the bottom, we can declare a new Dockerfile is built on an old one
+using the `FROM` directive. Here is an example Dockerfile that adds the
+R statistical computing environment to a basic Ubuntu Linux distribution.
+
+```
+FROM ubuntu:latest
+RUN apt-get update && apt-get -y install r-recommended
+```
+
+This acts like a software dependency; but unlike other software, a Dockerfile
+must have exactly one dependency (one `FROM` line). Note that a particular
+version of the dependency can be specified using the `:`.  We can in fact
+be much more precise, declaring not only version numbers like `ubuntu:14:04`,
+but specific cryptographic hashes that ensure we get the exact same image
+every time.  
+
+We can now build this Dockerfile and give it name, by running in the working directory:
+
+```bash
+docker build -t r-recommended .
+```
+
+The key point here is that other researchers can easily build off this 
+new image we have just created, extending our work directly, rather than
+having to go back to the original image. 
+
+
+However, before others can re-use our image we need a way to share it.
+
+### Docker hub
+
+While Docker images tend to be much smaller than equivalent virtual machines, moving 
+around even 100s of gigabytes can be a challenge.  In their work on virtual machines,
+[Dudley 2014] recommend only running these tools on cloud servers such as the Amazon
+EC2 system. As most researchers still develop software locally and may not have ready
+access to these resources, such a requirement adds an additional barrier to reuse.
+Fortunately in the case of Docker we have a somewhat more elegant solution through
+the use of the Docker Hub [^1].  Docker provides a convenient way to share any image
+publicly or privately through the Hub after creating a free account.  Here, we share
+a public copy of the image we have just created by using the `docker push` command,
+followed by the name of the image:
+
+```bash
+docker push username/r-recommended
+```
+
+Another user can now build directly on our image, rather than on the `ubuntu:latest`
+image we used as a base: 
+
+```
+FROM username/r-recommended 
+RUN apt-get update && apt-get -y install r-cran-teachingdemos
+```
+
+
+[^1]: Similar hubs are in fact available for full virtual machine images, such as the Vagrant hub. 
+
+Though we have shown adding only a single piece of software in each step,
+clearly this approach can be particularly powerful in building up more complex
+environments. 
+
+
+Each one acts as a building block providing just what is necessary to
+run one particular service or element, and exposing just what is necessary
+to link it together with other blocks.  For instance, we could have one
+container running a PostgreSQL database which serves data to another container
+running a python environment to analyze the data:
+
+```bash
+docker run -d --name db training/postgres
+docker run -d -P --link db:db training/webapp python app.py
+```
+
+Unlike the much more heavyweight virtual machine approach, containers
+are implemented in way such that a single computer can easily run 100s
+of such services each in their own container, making it easy to break
+computational elements down into logically reusable chunks that come,
+batteries included, with everything they need to run reproducibly.
+A researcher more familiar with python could connect our MySQL container
+to their python container, and so forth.
+
+<!-- too much detail? -->
+The implementation of this would nonetheless depend on the individual 
+researcher's willingness to break things into multiple containers, as
+it is indeed possible to run everything in a monolithic container. 
+This is not necessarily bad, as it simplifies the workflow (no need
+to execute and link separate containers), and can be refactored into
+multiple containers when appropriate. It remains to be seen whether
+linking containers through this mechanism
 
 
 1) Remix.  Titus has an excellent post, "Virtual Machines Considered
-Harmful for reproducibility" [1] , essentially pointing out that "you
-can't install an image for every pipeline you want...".  In contrast,
+Harmful for reproducibility" [1] , .  In contrast,
 Docker containers are designed to work exactly like that -- reusable
 building blocks you can link together with very little overhead in
 disk space or computation.  This more than anything else sets Docker
 apart from the standard VM approach.
 
-[Clark 2014] 
+Docker is not a virtual machine; containers are designed expressly to
+be remixable blocks.  You can put an R engine on one container and a
+mysql database on another and connect them. Docker philosophy aims at
+one function per container to maximize this reuse.  of course it's up
+to you to build this way rather than a single monolithic dockerfile,
+but the idea of linking containers is a technical concept at the heart
+of docker that offers a second and very different way to address the
+'remix' problem of VMs.
 
 
-> In scientific computing the environment was commonly managed via Makfiles & Unix-y hacks, or alternatively with monolithic software like Matlab. More recently, centralized package management has provided curated tools that work well together. But as more and more essential functionality is built out across a variety of systems and languages, the value -- and also the difﬁculty -- of coordinating multiple tools continues to increase. Whether we are producing research results or web services, it is becoming increasingly essential to set up new languages, libraries, databases, and more.
-
-> Documentation for complex software environments is stuck between two opposing demands. To make things easier on novice users, documentation must explain details relevant to factors like different operating systems. Alternatively, to save time writing and updating documentation, developers like to abstract over such details.
-
-
-
-## A "DevOpts" approach
 
 [Clark 2014] 
 
@@ -385,8 +619,6 @@ Related challenges:  RStudio and a consistent environment.
 - linked containers 
 - signed containers? 
 
-Hub / image delivery 
-
 
 4) Versioned images.  In addition to version managing the Dockerfile,
 the images themselves are versioned using a git-like hash system
@@ -404,13 +636,78 @@ dockerfiles, which acts as a kind of CI for your environment.
 Versioning and diff'ing images is a rather nice reproducibility
 feature.
 
-5) Linking images 
-Docker is not a virtual machine; containers are designed expressly to be remixable blocks.  You can put an R engine on one container and a mysql database on another and connect them. Docker philosophy aims at one function per container to maximize this reuse.  of course it's up to you to build this way rather than a single monolithic dockerfile, but the idea of linking containers is a technical concept at the heart of docker that offers a second and very different way to address the 'remix' problem of VMs. 
 
 
-Cultural challenges 
 
 
+# Further considerations 
+
+## Combining virtualization with other reproducible-research tools
+
+<!-- Package managers -->
+
+It is possible, and indeed often desirable, to tackle the problem of dependencies
+at a much higher level than that of the operating system itself (e.g. [Ooms 2014]).
+For instance, it is often sufficient to address these concerns at the
+level of a particular scripting language rather than the level of the
+operating system. Most major scripting languages have dedicated tools for
+handling dependencies and versioning (e.g. Ruby gems, R packages, Python
+eggs, perl modules, javascript node package manager); with some languages
+having the fortune or misfortune to have multiple systems. Though systems
+differ somewhat in their strategies and their effectiveness, all are
+generally vulnerable to changes in their lower-level dependencies (such as
+compilers, C libraries, and so forth) that may differ between platforms.
+More pointedly, researchers whose work is not easily isolated to a single
+such environment but combines tools from different systems (including
+combining those tools used for formatting & visual display, such as
+LaTeX or pandoc, with scripting or analysis tools such as R). 
+
+
+<!-- Dynamic documents --> 
+Dynamic documents are another example of an approach that 
+
+approach ([Leisch 2002], [Peng 2011], [Xie 2013]), which seek to embed
+the code required to re-generate the results within the manuscript
+itself. This process serves as a way to distribute computational
+code with publications, to ensure that methodological discriptions,
+parameter values, figures, and so forth remain synchronized with the code,
+and to provide a way for other researchers to both tweak the code and
+'execute' the paper to reproduce the results.  While these features
+are very desirable from the perspective of reproducible research,
+they inevitably increase the number of software dependencies involved,
+including those tools that support combining code with text (e.g. [Xie
+2013]) as well as tools merely for the handling the formating and layout
+(e.g. LaTeX, pandoc).  Consequently, such a paper can fail to execute
+successfully for reasons having nothing to do with the computations
+involved in the research, but rather due to software responsible for
+implementing these dynamic features.  This problem is largely resolved by
+providing a consistent development environmment, making the approaches
+discussed here a natural complement to that of dynamic documents.
+A similar argument can be made regarding the use of workflow systems,
+which can introduce additional softare dependencies even as they seek
+to make it easier to work across them.
+
+
+
+### Impacting cultural norms? 
+
+We noted at the outset that cultural expecations responsible for a
+lack of code sharing practices in many fields are a far more extensive
+primary barrier to reproducibility than the technical barriers we have
+discussed here. Nevertheless, it may be worth considering how solutions
+to these technical barriers can influence the cultural landscape as well.
+Many researchers may be reluctant to publish code today because they
+fear a it will be primarily a one-way street: more technical savvy
+researchers then themselves can benefit from their hard work, while
+they may not benefit from the work produced by others.  Lowering the
+technical barriers to reuse provides immediate practical benefits
+that make this exchanged into a more balanced, two-way street. Another
+concern is that the difficulty imposed in preparing code to be shared,
+such as providing even semi-adequate documentation or support for other
+users to be able to install and run it in the first place is too high
+[Stodden 2010]. By lowering the barriers these barrier to re-use through
+the appropriate infrastructure first, we may also reduce certain cultural
+barriers to sharing. 
 
 
 
@@ -423,4 +720,36 @@ Cultural challenges
 - NSF
 - rOpenSci
 - Dirk Eddlebuettel, Rich FitzJohn, Yihui Xie, Titus Brown, John Stanton-Geddes and others for helpful discussions about reproducibility, virtualization, and Docker that have helped shape this manuscript. 
+
+# References 
+
+[Garijo 2013]:     http://doi.org/10.1371/journal.pone.0080278
+[Lapp 2014]: https://storify.com/hlapp/reproducibility-repeatability-bigthink
+[Gilbert 2012]: 10.1111/j.1365-294X.2012.05754.x
+[Collberg 2014]: http://reproducibility.cs.arizona.edu/v1/tr.pdf
+[Brown 2014]: http://cs.brown.edu/~sk/Memos/Examining-Reproducibility/
+
+[Vandewalle 2009]: http://doi.org/10.1109/MSP.2009.932122
+[Merali 2010]: http://doi.org/10.1038/467775a "Computational Science ... error: why scientific programming does not compute"
+[Gil 2007]: http://doi.org/10.1109/MC.2007.421 "Examining the Challenges of Scientific Workflows"
+[Hull 2006]: http://doi.org/10.1093/nar/gkl320 "Taverna: a tool for building and running workflows of services"
+[Altintas 2004]: http://doi.org/10.1109/SSDM.2004.1311241 "Kepler: an extensible system for design and execution of scientific workflows"
+[Howe 2012]: http://doi.org/10.1109/MCSE.2012.62
+[Dudley 2013]: http://doi.org/10.1038/nbt1110-1181 
+[Clark 2014]: https://berkeley.app.box.com/s/w424gdjot3tgksidyyfl
+[Ooms 2013]: http://arxiv.org/abs/1303.2140v2
+[Ooms 2014]: http://arxiv.org/abs/1406.4806
+[Peng 2011]: http://doi.org/10.1126/science.1213847
+[Barnes 2010]: http://doi.org/10.1038/467753a
+[Ince 2012]: http://doi.org/10.1038/nature10836
+[Stodden 2014]: http://doi.org/10.3233/SJI-140818
+[Stodden 2010]: http://doi.org/10.2139/ssrn.1550193
+[Stodden 2013]: http://www.davidhbailey.com/dhbpapers/icerm-report.pdf "ICERM Working group report: Setting the Default to Reproducible: Reproducibility in Computational and Experimental Mathematics"
+
+[Nature editorial]: http://doi.org/10.1038/483509a
+[Nature Special Issue]: http://www.nature.com/nature/focus/reproducibility/
+
+[van der Meulen 2008]: http://doi.org/10.1109/TSE.2008.70 "The effectiveness of software diversity in a large population of programs."
+
+[Watson 2012]: https://twitter.com/BioMickWatson/status/265037994526928896
 
