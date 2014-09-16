@@ -62,8 +62,8 @@ the January 2015 issue of Operating Systems Review.
 -->
 
 Reproducible research has recieved an increasing level of attention
-throughout the scientific community (e.g. [Peng 2011], [Nature editorial])
-and the public at large (e.g. [The Economist 2014]). All steps of the
+throughout the scientific community (e.g. [Peng 2011], [Nature 2014])
+and the public at large (e.g. [The Economist 2013]). All steps of the
 scientific process, from data collection and processing, to analyses,
 visualizations and conclusions depend ever more on computation and
 algorithms, _computational reproducibility_ has recieved particular
@@ -131,8 +131,6 @@ replicate that study [Brown 2014]. Installing or building software
 necessary to run the code in question assumes the ability to recreate
 the computational environment of the original researchers. 
 
-<!-- FIXME more stuff on what this means-->
-
 
 <!-- Time savings. Personal reproducibility. Collaboration. Teaching. --> 
 
@@ -141,9 +139,7 @@ the computational environment of the original researchers.
 2. Workflow systems 
 3. Package managers 
 4. Dynamic documents
-
 -->
-
 
 <!-- Omit this? -->
 Differences in numerical evaluation, such as arise in floating point
@@ -492,91 +488,65 @@ to build on existing work if it can only be done by using a particular
 workflow system or monolothic software platform with which they are
 unfamiliar.  Likewise, a user is more likey to make their own computational
 environment avialable for reuse if it does not involve a significant
-added effort in packaging and documenting [Stodden 2010]. 
+added effort in packaging and documenting ([Stodden 2010]). 
 
 
 Though Docker is not immune to these challenges, it offers a interesting 
-example of a way forward in addressing these fundamental cocerns.
+example of a way forward in addressing these fundamental cocerns. 
 
 - *Local environment*
 - *Modular reuse*
-
-
-<!---
-- The ability to work in a familiar, local environment (during one's own research or when re-using elements from another researcher)
-- An Docker container approach to both development and deployment
-- Image re-use & Image linking 
--->
-
-
-
-
-
 
 
 # Using Docker as a local development environment 
 
 Perhaps the most important feature of a reproducible research tool is
 that it be easy to learn and fit relatively seamlessly into exsiting
-workflow patterns of domain researchers.  As we have seen, this, more than
-any other concern, can explain the relatively low uptake of previously
-proposed solutions.  <!-- too strong? -->
+workflow patterns of domain researchers.  As we have seen, this,
+more than any other concern, can explain the relatively low uptake
+of previously proposed solutions.  Being a new and unfamiliar tool to
+most domain scientists, Docker is far from immune to the same critique.
+Nevertheless, Docker takes us several key steps towards an approach that
+can be easily adopted in a research context.
 
-Being a new and unfamiliar tool to most domain scientists, Docker is
-far from immune to the same critique.  Nevertheless, Docker takes us
-several key steps towards an approach that can be easily adopted in a
-research context.
+While proponents of virtual machines for reproducible research propose
+that these machines would be available exclusively as cloud computing
+environments (e.g. [Dudley 2014]), many researchers work _locally_, that
+is, primarily with software that is installed on their laptop or desktop
+computer, and turning to cloud-based or other remote platforms only for
+certain collaborative tasks or when the work is mature enough to need
+increased computational power.  Working locally allows a researcher to
+rely more on the graphic interface tools for tasks such as managing
+files, text editing, debugging, IDEs, or interacting with version
+control systems.  Scientific computing on remote machines, by contrast,
+still relies largely on potentially less familiar text based command
+line functions for these tasks (though web based interfaces are rapidly
+filling this gap).
 
-Primary among these is the ability to run Docker locally on all major
-operating systems with minimal prior expertise.  On systems not already
-based on the Linux Kernel (such as Mac or Windows clients), this is
-accomplished through the use of a small VirtualBox-based VM running on
-the host OS called `boot2docker`.
+Docker can be easily installed on most major platforms (see
+[https://docs.docker.com/installation](https://docs.docker.com/installation);
+On systems not already based on the Linux Kernel, such as Mac or Windows,
+this is accomplished through the use of a small VirtualBox-based VM
+running on the host OS called `boot2docker`) and run locally.  Docker
+allows a user to link any directory (such as the working directory
+for a particular script or project) to the running Docker container.
+This allows a user to rely on the familiar tools of the host OS for
+roles such as text editing, file browsing, or version control, while
+still allowing code execution to occur inside the controlled development
+environment of the container.
 
-Local development offers several important advantages in encouraging
-adoption.
-
-- Shared volumes
-- Host OS tools
-
------
-
-In the R environment, the open source RStudio IDE provides
-another key component in making this system accessible to most
-domain scientists. Because the RStudio IDE is written completely with
-standard web languages (javascript, css, and html), its web-based 
-RStudio Server looks and feels identical to its popular desktop IDE.
-RStudio Server provides a way to interact with R on a remote environment
-without the latency, X tunnelling, etc typically involved in running R
-on a remote server.
-
-For our purposes, it provides users a way to interact with R,
-the filesystem, git, text editors, and graphics running on a Docker
-container.  Users already familiar with the popular IDE can thus benefit
-from the reproduciblity and portability features provided by running R
-in a container environment without having to adapt to a new workflow
-for managing these things that is usually necessary when moving to a
-cloud environment.
-
-RStudio-Server is not the only way to provide a familiar developer
-environment to users working with a development environment running in
-a container on their local computer.  Docker supports the sharing of
-volumes (directories) between the container and the host OS.  This allows
-a user to rely on the familiar tools of the host OS for roles such as
-text editing, file browsing, or version control, while still allowing
-code execution to occur inside the controlled development environment
-of the container. In this example, we launch an interactive R console
-in a container that is linked to our current working directory:
+For example, we launch an interactive R console in a container that
+is linked to our current working directory:
 
 
 ```bash
 docker run -v $(pwd):/ -it eddelbuettel/docker-ubuntu-r /usr/bin/R
 ```
 
-(Clearly a similar command could be used just as well with interactive
-shells from other languages such as `ipython` or `irb`). The resulting
-system behaves almost identically[^2] to running R on the command line
-of the host OS.
+The resulting system behaves almost identically[^2] to running R on
+the command line of the host OS. (Clearly a similar command could be
+used just as well with interactive shells from other languages such as
+`ipython` or `irb`). 
 
 [^2]: External windows, such graphics windows cannot be opened directly
 from the container in this setup.  Graphics would have to be saved to
@@ -584,8 +554,68 @@ desk as raster or vector files and viewed on the host OS, until a better
 solution can be found. RStudio-server is one way around this.
 
 
+### Using RStudio Server 
+
+An alternative approach for working locally with familar tools is to
+leverage web-based clients such as RStudio. 
+In the R environment, the open source RStudio IDE provides
+another key component in making this system accessible to most
+domain scientists. Because the RStudio IDE is written completely with
+standard web languages (javascript, css, and html), its web-based 
+RStudio Server looks and feels identical to its popular desktop IDE.
+<!--
+RStudio Server provides a way to interact with R on a remote environment
+without the latency, X tunnelling, etc typically involved in running R
+on a remote server. -->
+
+RStudio server provides users a way to interact with R,
+the filesystem, git, text editors, and graphics running on a Docker
+container.  Users already familiar with the popular IDE can thus benefit
+from the reproduciblity and portability features provided by running R
+in a container environment without having to adapt to a new workflow.
 
 
+To accompany this paper, I provide a Docker image for running RStudio
+server, which can be launched as follows.  From the terminal (or
+boot2docker terminal on Mac or Windows client), run:
+
+```bash
+sudo docker run -d -p 8787:8787 cboettig/ropensci
+```
+
+That will take a while to download the image the first time you run
+it. boot2docker users will then need to determine the ip address assigned
+to boot2docker, while Linux users can just specify `http://localhost`
+
+```bash
+boot2docker ip
+```
+
+
+Add the port `:8787` to the end of this address and paste
+it into your browser address bar, which should open to the
+RStudio welcome screen.  A user can now login with user/password
+`rstudio/rstudio`, run R scripts, install packages, use git,
+and so forth. User login and other configurations can be
+customized using environmental variables; see details at
+[https://github.com/ropensci/docker](https://github.com/ropensci/docker)
+
+### Portable computation
+
+A particular advantage of this approach is that the resulting
+computational environment is immediately _portable_.  This is useful not
+only for the purposes of reproducible research, where other users may seek
+to reconstruct the computational environment necessary to run the code,
+but is also of immediate value to the researcher themselves. For instance,
+a researcher might want to execute their code on a cloud server which
+has more memory or processing power then their local machine, or would
+want a co-author to help debug a particular problem.  In either case,
+the researcher can export a snapshot of their running container:
+
+```bash
+docker export <container-name> > container.tar
+```
+and then run this identical environment on the cloud or collaborators' machine.
 
 
 ## Docker remix: Building re-usable modules
@@ -605,7 +635,7 @@ There are at least two ways in which Docker supports this kind of
 extensibility.
 
 
-First, Docker makes it immensely easy to build one container on top of
+First, Docker facilitates modular reuse by build one container on top of
 another.  Rather than copy a Dockerfile and then start adding more lines
 to the bottom, we can declare a new Dockerfile is built on an old one
 using the `FROM` directive. Here is an example Dockerfile that adds the
@@ -693,40 +723,59 @@ environment for a different language to this same MySQL container,
 and so forth.
 
 
+<!-- Transition -->
 
+## Versioning 
 
+<!-- FIXME: Email text.  revise -->
 
+ In addition to version managing the Dockerfile,
+the images themselves are versioned using a git-like hash system
+(e.g. see `docker commit`, `docker push`/`docker pull`, `docker history`, 
+`docker diff`).  Docker images and containers have dedicated metadata specifying the date, author, parent
+image, and other details (see `docker inspect`).  We can roll back an image through the layers of history
+of its construction, then build off an earlier layer, or roll back changes
+we have made interactively in a container. For instance, here we can
+inspect recent changes made to the `ubuntu:latest` image:
 
+```bash
+docker history ubuntu:latest
+```
 
+We can identify an earlier version, and roll back to that version 
+just by adusting the docker tag to match the hash of that version. 
+For instance:
 
-<!-- too much detail? -->
-The implementation of this would nonetheless depend on the individual 
-researcher's willingness to break things into multiple containers, as
-it is indeed possible to run everything in a monolithic container. 
-This is not necessarily bad, as it simplifies the workflow (no need
-to execute and link separate containers), and can be refactored into
-multiple containers when appropriate. It remains to be seen whether
-linking containers through this mechanism
+```bash
+docker tag 25f ubuntu:latest
+```
+If we now inspect the history, we see it begins from this earlier poitn:
 
+```bash
+docker history ubuntu:latest
+```
 
+This same feature also means that docker can perform incremential
+uploads and downloads that send only the differences between images,
+(just like `git push` or `git pull` for git repositories), rather than
+transfer the full image each time. 
 
-
+<!-- Step back, big picture -->
 
 
 ----------------
 
 
-- Interactive use, scripted use (Dockerfiles)
-- Reverting to a previous state
-- Integration with local development environment
-- Integration with cloud computing
-- Transparent & extensible
-- serial and linking containers
-- Best practices are still taking shape
 
+<!--
+The implementation of this would nonetheless depend on the individual 
+researcher's willingness to break things into multiple containers, as
+it is indeed possible to run everything in a monolithic container. 
+This is not necessarily bad, as it simplifies the workflow (no need
+to execute and link separate containers), and can be refactored into
+multiple containers when appropriate. 
+--> 
 
-
-----------
 
 ##  Best practices 
 
@@ -742,76 +791,6 @@ Upcoming features:
 - signed containers? 
 
 -------------
-
-
-
-
-
-
-3) You can run the docker container *locally*.  I think this is huge.
-In my experience, most researchers do their primary development
-locally.  By running RStudio-server on your laptop, it isn't necessary
-for me to spin up an EC2 instance (with all the knowledge & potential
-cost that requires).  By sharing directories between Docker and the
-host OS, a user can still use everything they already know -- their
-favorite editor, moving files around with the native OS
-finder/browser, using all local configurations, etc, while still
-having the code execution occur in the container where the software is
-precisely specified and portable.  Whenever you need more power, you
-can then deploy the image on Amazon, DigitalOcean, a bigger desktop,
-your university HPC cluster, your favorite CI platform, or wherever
-else you want your code to run.  (On Mac & Windows, this uses
-something called boot2docker, and was not very seamless early on.  It
-has gotten much better and continues to improve.)
-
-
-
-4) Versioned images.  In addition to version managing the Dockerfile,
-the images themselves are versioned using a git-like hash system
-(check out: docker commit, docker push/pull, docker history, docker
-diff, etc).  They have metadata specifying the date, author, parent
-image, etc.  We can roll back an image through the layers of history
-of its construction, then build off an earlier layer.  This also
-allows docker to do all sorts of clever things, like avoiding
-downloading redundant software layers from the docker hub.  (If you
-pull a bunch of images that all build on ubuntu, you don't get n
-copies of ubuntu you have to download and store).  Oh yeah, and
-hosting your images on Docker hub is free (no need to pay for an S3
-bucket... for now?) and supports automated builds based on your
-dockerfiles, which acts as a kind of CI for your environment.
-Versioning and diff'ing images is a rather nice reproducibility
-feature.
-
---------------------------------
-
-<!-- Covered elsewhere in a more integrated fashion -->
-Researchers familiar with LXC may be tempted to view the Docker
-system as little more than a creative application and marketing of an
-existing technology. However, the Docker approach adds several features
-crucial for its use in reproducible research (adapted from [Docker
-FAQ](https://docs.docker.com/faq/#what-does-docker-add-to-just-plain-lxc)):
-
-- *Portable deployment*: Docker defines a format for bundling and
-exchanging containers such that they run identically across platforms.
-
-- *Automatic builds*: Docker defines a format (Dockerfiles) that provide
-a simple, scripted way to construct containers, following the DevOpts
-philosophy.
-
-
-- *Versioning*: Docker provides git-like capibilities for tracking
-changes to a container, inspecting the history, metadata, or diff between
-versions, committing versions, rolling back changes, and incremential
-uploads and downloads that send only the differences (like `git push`
-or `git pull`).
-
-- *Component reuse*: Any container can be used as the base for any other.
-
-- *Sharing*: Docker provides a public registry (Docker Hub) where any
-user can make images avaialble to any other. (The registry itself is
-also open source so that it can be deployed privately).
-
-Each of these elements have clear implications for reproducible research.
 
 
 
@@ -896,18 +875,15 @@ barriers to sharing.
 
 # Acknowledgements
 
-- NSF
-- rOpenSci
-- Dirk Eddlebuettel, Rich FitzJohn, Yihui Xie, Titus Brown, John Stanton-Geddes and others for helpful discussions about reproducibility, virtualization, and Docker that have helped shape this manuscript. 
+CB acknowledges support from NSF grant DBI-1306697, and also from the Sloan Foundation support through the rOpenSci project. CB also wishes to thank Dirk Eddlebuettel, Rich FitzJohn, Yihui Xie, Titus Brown, John Stanton-Geddes and many others for helpful discussions about reproducibility, virtualization, and Docker that have helped shape this manuscript. 
 
 # References 
 
-[Garijo 2013]:     http://doi.org/10.1371/journal.pone.0080278
+[Garijo 2013]: http://doi.org/10.1371/journal.pone.0080278
 [Lapp 2014]: https://storify.com/hlapp/reproducibility-repeatability-bigthink
 [Gilbert 2012]: 10.1111/j.1365-294X.2012.05754.x
 [Collberg 2014]: http://reproducibility.cs.arizona.edu/v1/tr.pdf
 [Brown 2014]: http://cs.brown.edu/~sk/Memos/Examining-Reproducibility/
-
 [Vandewalle 2009]: http://doi.org/10.1109/MSP.2009.932122
 [Merali 2010]: http://doi.org/10.1038/467775a "Computational Science ... error: why scientific programming does not compute"
 [Gil 2007]: http://doi.org/10.1109/MC.2007.421 "Examining the Challenges of Scientific Workflows"
@@ -916,19 +892,98 @@ barriers to sharing.
 [Howe 2012]: http://doi.org/10.1109/MCSE.2012.62
 [Dudley 2013]: http://doi.org/10.1038/nbt1110-1181 
 [Clark 2014]: https://berkeley.app.box.com/s/w424gdjot3tgksidyyfl
-[Ooms 2013]: http://arxiv.org/abs/1303.2140v2
-[Ooms 2014]: http://arxiv.org/abs/1406.4806
+[Ooms 2013]: http://arxiv.org/abs/1303.2140v2 "Possible Directions for Improving Dependency Versioning in R"
+[Ooms 2014]: http://arxiv.org/abs/1406.4806 "The OpenCPU System: Towards a Universal Interface for Scientific Computing through Separation of Concerns"
 [Peng 2011]: http://doi.org/10.1126/science.1213847
 [Barnes 2010]: http://doi.org/10.1038/467753a
 [Ince 2012]: http://doi.org/10.1038/nature10836
 [Stodden 2014]: http://doi.org/10.3233/SJI-140818
 [Stodden 2010]: http://doi.org/10.2139/ssrn.1550193
 [Stodden 2013]: http://www.davidhbailey.com/dhbpapers/icerm-report.pdf "ICERM Working group report: Setting the Default to Reproducible: Reproducibility in Computational and Experimental Mathematics"
-
-[Nature editorial]: http://doi.org/10.1038/483509a
-[Nature Special Issue]: http://www.nature.com/nature/focus/reproducibility/
-
+[Nature 2014]: http://doi.org/10.1038/483509a
+[The Economist 2013]: http://www.economist.com/news/leaders/21588069-scientific-research-has-changed-world-now-it-needs-change-itself-how-science-goes-wrong
 [van der Meulen 2008]: http://doi.org/10.1109/TSE.2008.70 "The effectiveness of software diversity in a large population of programs."
-
 [Watson 2012]: https://twitter.com/BioMickWatson/status/265037994526928896
+
+
+```{r include=FALSE}
+library("knitcitations")
+options(citation_format = "pandoc")
+
+citep(c(
+"10.1371/journal.pone.0080278",
+"10.1126/science.1213847",
+"10.1038/467753a",
+"10.1038/nature10836",
+"10.1038/483509a",
+"10.1038/467775a",
+"10.1111/j.1365-294X.2012.05754.x",
+"10.1109/MSP.2009.932122",
+"10.1109/MC.2007.421",
+"10.1093/nar/gkl320"))
+
+citep(c(
+"10.1109/SSDM.2004.1311241",
+"10.1109/MCSE.2012.62"))
+
+citep("10.1038/nbt1110-1181")
+
+citep("http://doi.org/10.3233/SJI-140818")
+
+citep(c(
+"10.2139/ssrn.1550193",
+"10.1109/TSE.2008.70"))
+
+
+citep(c(
+"http://arxiv.org/abs/1303.2140v2",
+"http://arxiv.org/abs/1406.4806",
+"https://storify.com/hlapp/reproducibility-repeatability-bigthink",
+"http://cs.brown.edu/~sk/Memos/Examining-Reproducibility/",
+"https://berkeley.app.box.com/s/w424gdjot3tgksidyyfl",
+"http://reproducibility.cs.arizona.edu/v1/tr.pdf",
+"http://www.davidhbailey.com/dhbpapers/icerm-report.pdf",
+"http://www.economist.com/news/leaders/21588069-scientific-research-has-changed-world-now-it-needs-change-itself-how-science-goes-wrong",
+"https://twitter.com/BioMickWatson/status/265037994526928896"))
+
+
+write.bibtex(file="components/references.bib")
+
+
+```
+
+<!-- Covered elsewhere in a more integrated fashion -->
+<!--
+
+Researchers familiar with LXC may be tempted to view the Docker
+system as little more than a creative application and marketing of an
+existing technology. However, the Docker approach adds several features
+crucial for its use in reproducible research (adapted from [Docker
+FAQ](https://docs.docker.com/faq/#what-does-docker-add-to-just-plain-lxc)):
+
+- *Portable deployment*: Docker defines a format for bundling and
+exchanging containers such that they run identically across platforms.
+
+- *Automatic builds*: Docker defines a format (Dockerfiles) that provide
+a simple, scripted way to construct containers, following the DevOpts
+philosophy.
+
+
+- *Versioning*: Docker provides git-like capibilities for tracking
+changes to a container, inspecting the history, metadata, or diff between
+versions, committing versions, rolling back changes, and incremential
+uploads and downloads that send only the differences (like `git push`
+or `git pull`).
+
+- *Component reuse*: Any container can be used as the base for any other.
+
+- *Sharing*: Docker provides a public registry (Docker Hub) where any
+user can make images avaialble to any other. (The registry itself is
+also open source so that it can be deployed privately).
+
+Each of these elements have clear implications for reproducible research.
+
+-->
+
+
 
