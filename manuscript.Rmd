@@ -326,54 +326,195 @@ or not they have any previous knowledge of docker and its commands -->
 # Docker
 
 
-Docker is an open source (Apache Version 2) software platform written in
-the Go programming language. 
+<!-- Docker is an open source (Apache Version 2) software platform written in
+the Go programming language.-->
 
-Docker builds on many long-familiar technologies from operating
-systems research: LXC containers, virtualization of the OS, and
-a hash-based or git-like verioning and differencing system, among
-others. Researchers familiar with LXC may be tempted to view the Docker
-system as little more than a creative application and marketing of an
-existing technology. However, the Docker approach adds several features
-crucial for its use in reproducible research (adapted from [Docker
-FAQ](https://docs.docker.com/faq/#what-does-docker-add-to-just-plain-lxc)):
-
-- *Portable deployment*: Docker defines a format for bundling and
-exchanging containers such that they run identically across platforms.
-
-- *Automatic builds*: Docker defines a format (Dockerfiles) that provide
-a simple, scripted way to construct containers, following the DevOpts
-philosophy.
-
-- *Versioning*: Docker provides git-like capibilities for tracking
-changes to a container, inspecting the history, metadata, or diff between
-versions, committing versions, rolling back changes, and incremential
-uploads and downloads that send only the differences (like `git push`
-or `git pull`).
-
-- *Component reuse*: Any container can be used as the base for any other.
-
-- *Sharing*: Docker provides a public registry (Docker Hub) where any
-user can make images avaialble to any other. (The registry itself is
-also open source so that it can be deployed privately).
-
-Each of these elements have clear implications for reproducible research.
+Docker is an open source project that builds on many long-familiar
+technologies from operating systems research: LXC containers,
+virtualization of the OS, and a hash-based or git-like verioning
+and differencing system, among others. 
 
 
+<!-- Define:
+- Dockerfile
+- Image 
+- Container: When we run a docker image, we get a container.  We can run the same image multiple times, resulting in many identical containers.  We can save the state of a container at any time, which creates a new image.  
+- Dockerfile -> build -> image
+- Image -> run -> container
+-->
 
------
+I introduce the most relevant concepts from Docker through the 
+context of the four challenges for reproducible research I have
+discussed above. 
 
-1. **"Dependency Hell"**
-2.  **Imprecise documentation**
-3.  **Code rot**
-4. **Barriers to adoption and reuse in existing solutions**
+### 1. Docker images: resolving 'Dependency Hell' 
+
+A Docker based approach works similarly to a virtual machine image in
+addressing the dependency problem by providing other researchers with
+a binary image in which all the software has already been installed,
+configured and tested. (A machine image can also include all data files
+necessary for the research, which may simplify the distribution of data.)
+
+A key difference between Docker images and other virutal machines is 
+that the Docker images share the Linux kernel with the host machine.
+For the end user the primary consequence of this is that any Docker
+image must be based on a Linux system with Linux-compatible software, which
+includes (R, Python, Matlab, and most other scientific programming needs). [^4] 
+
+Sharing the Linux kernel makes Docker much more light-weight and higher
+performance than complete virtual machines -- a typical desktop computer
+could run no more than a few virutal machines at once but 
+would have no trouble running 100s of Docker containers (a container
+is simply the term for running instance of an image). This feature
+has made Docker particularly attractive to industry and is largely
+responsible for the immense popularity of Docker. For our purposes this
+is a nice bonus, but the chief value to reproducible research lies
+in other aspects.
+
+[^4]: Note that re-distribution of an image in which proprietary software
+has been installed will be subject to any relevant licensing agreement.
+
+<!-- 
+- image sharing (hub)
+- image linking
+--> 
+
+### 2. Dockerfiles: Resolving imprecise documentation
+
+Though Docker images can be created interactively, this leaves little
+transparent record [^3] of what software has been installed and how.
+Dockerfiles provide a simple script (similar to a Makefile) that defines
+exactly how to build up the image, consistent with the DevOpts approach
+we mentioned previously.
+
+With a syntax that is simpler than other provisioning tools (e.g. Chef,
+Puppet, Ansible) or Continuous Integration (CI) platforms (e.g. Travis CI,
+Shippable CI); users need little more than a basic familarity with shell
+scripts and a Linux distribution software environment (e.g. Debian-based
+`apt-get`) to get started writing Dockerfiles.
+
+This approach has many advantages:
+
+- While machine images can be very large (many gigabytes), a Dockerfile
+is just a small plain text file that can be easily stored and shared.
+
+- Small plain text files are ideally suited for use with a version
+management system such as `subversion` or `git`, which can track any
+changes made to the `Dockerfile`
+
+- the `Dockerfile` provides a human readable summary of the necessary
+software dependencies, environmental variables and so forth needed to
+execute the code. There is little possiblity of the kind of holes or 
+imprecision in such a script that so frequently cause difficulty in
+manually implemented documentation of dependencies. This approach
+also avoids the burden of having to tediously document dependencies 
+at the end of a project, since they are instead documented as they 
+are installed by writing the `Dockerfile`.
+
+- Unlike a `Makefile` or other script, the `Dockerfile` includes all
+software dependencies down to the level of the OS, and is built by the
+Docker `build` tool, making it very unlikely that the resulting build
+will differ when being built on different machines. This is not to say
+that all builds of a Dockerfile are bitwise identical.  In particular,
+builds executed later will install more recent versions of the same
+software, if available, unless the package managers used are explicitly
+configured otherwise. We address this issue in the next section. 
+
+- It is possible to add checks and tests following the commands for
+installing the software environment, which will verify that the setup
+has been successful.  This can be important in addressing the issue of
+code-rot which we discuss next.
+
+- It is straight-straight forward for other users to extend or customize 
+the resulting image by editing the script directly. 
+
+[^3]: The situation is in fact slightly better than the virtual machine
+approach because these changes are versioned. Docker provides tools
+to inspect differences (diffs) between the images, and we can also roll
+back changes to earlier versions. 
+
+### 3. Tackling code-rot with image versions
+
+As I have discussed above, changes to the dependencies, whether they are
+the result of security fixes, new features, or deprecation of old software,
+can break otherwise functioning code. These challenges can be significantly
+reduced because Docker defines the software environment to a particular operating system 
+and suite of libraries, such as the Ubuntu or Debian distribution.  Such 
+distributions use a staged release model with `stable`, `testing` and `unstable` 
+phases subjected to extensive testing to catch such potential problems [Ooms 2013],
+while also providing regular security updates to software within each stage.
+Nonetheless, this cannot completely avoid the challenge of code-rot,
+particularly when it is necessary to install software that is not (yet)
+available for a given distribution.
+
+To address this concern, one must archive a binary copy of the image
+used at the time the research was first performed.  Docker provides a
+simple utility to save an image as a portable `tarball` file that can
+be read in by any other Docker installation, providing a robust way to
+run the exact versions of all software involved.  By testing both the
+`tarball` archive and the image generated by the latest Dockerfile,
+Docker provides a simple way to confirm whether or not code rot has
+effected the function of a particular piece of code.
 
 
-------
+<!-- FIXME move this later --> 
+To simplify this process, Docker also supports *Automated Builds*
+through the Docker Hub.  This acts as a kind of Continous Integration
+(CI) service that verifies the image builds correctly whenever the
+Dockerfile is updated, particularly if the Dockerfile includes checks
+for the environment. The Hub also provides a convenient distribution
+service, freely storing the prebuilt images, along with their metadata,
+for download and reuse by others. The Docker Hub is a free service and
+an open source software product so that users can run their own private
+versions of the Hub on their own servers, for instance, if security of
+the data or the longevity of the public platform is a concern.
+
+
+### 4. Barriers to adoption and re-use
+
+A technical solution, no matter how elegant, will be of little practical 
+use for reproducible research unless it is both easy to use and adapt to
+the existing workflow patterns of practicing domain researchers.
+
+Though most of the concerns we have discussed so far can be addressed
+through well-designed workflow software or the use of a DevOpts approach
+to provisioning virtual machines by scripts, neither approach has seen
+widespread adoption by domain researchers, who work primarily in a
+local rather than cloud-based environment using develoment tools native
+to their personal operating system. To gain more widespread adoption,
+reproducible research technologies must make it easier, not harder,
+for a researcher to perform the tasks they are already doing (before 
+considering any additional added benefits).
+
+These issues are reflected both during the original research or development
+phase and in any subsequent reuse. Another researcher may be less likely
+to build on existing work if it can only be done by using a particular
+workflow system or monolothic software platform with which they are
+unfamiliar.  Likewise, a user is more likey to make their own computational
+environment avialable for reuse if it does not involve a significant
+added effort in packaging and documenting [Stodden 2010]. 
+
+
+Though Docker is not immune to these challenges, it offers a interesting 
+example of a way forward in addressing these fundamental cocerns.
+
+- *Local environment*
+- *Modular reuse*
+
+
+<!---
+- The ability to work in a familiar, local environment (during one's own research or when re-using elements from another researcher)
+- An Docker container approach to both development and deployment
+- Image re-use & Image linking 
+-->
 
 
 
-# Using Docker in an R environment 
+
+
+
+
+# Using Docker as a local development environment 
 
 Perhaps the most important feature of a reproducible research tool is
 that it be easy to learn and fit relatively seamlessly into exsiting
@@ -395,13 +536,16 @@ the host OS called `boot2docker`.
 Local development offers several important advantages in encouraging
 adoption.
 
+- Shared volumes
+- Host OS tools
+
 -----
 
 In the R environment, the open source RStudio IDE provides
 another key component in making this system accessible to most
 domain scientists. Because the RStudio IDE is written completely with
-standard web languages: javascript, css, and html, its web-based client,
-RStudio-Server, looks and feels identical to its popular desktop IDE.
+standard web languages (javascript, css, and html), its web-based 
+RStudio Server looks and feels identical to its popular desktop IDE.
 RStudio Server provides a way to interact with R on a remote environment
 without the latency, X tunnelling, etc typically involved in running R
 on a remote server.
@@ -442,20 +586,9 @@ solution can be found. RStudio-server is one way around this.
 
 
 
-- Interactive use, scripted use (Dockerfiles)
-- Reverting to a previous state
-- Integration with local development environment
-- Integration with cloud computing
-- Transparent & extensible
-- serial and linking containers
-
-- Best practices are still taking shape
 
 
-
-
-
-## Docker remix
+## Docker remix: Building re-usable modules
 
 The approach of Linux Containers represented by Docker offers a technical
 solution to what is frequently seen as the primary weakness of the
@@ -580,48 +713,40 @@ linking containers through this mechanism
 
 
 
+----------------
+
+
+- Interactive use, scripted use (Dockerfiles)
+- Reverting to a previous state
+- Integration with local development environment
+- Integration with cloud computing
+- Transparent & extensible
+- serial and linking containers
+- Best practices are still taking shape
+
+
+
+----------
+
+##  Best practices 
+
+- Using dockerfiles instead of containers
+- Using appropriate, common base images
+- Archiving tarball snapshots
+- Adding tests/checks to the Dockerfile
+- Sharing 
+- Leveraging package managers appropriately to handle software dependencies
+
+Upcoming features: 
+
+- signed containers? 
+
+-------------
 
 
 
 
-<!-- excerpted --> 
 
-
-
-1) Remix.  Titus has an excellent post, "Virtual Machines Considered
-Harmful for reproducibility" [1] , .  In contrast,
-Docker containers are designed to work exactly like that -- reusable
-building blocks you can link together with very little overhead in
-disk space or computation.  This more than anything else sets Docker
-apart from the standard VM approach.
-
-Docker is not a virtual machine; containers are designed expressly to
-be remixable blocks.  You can put an R engine on one container and a
-mysql database on another and connect them. Docker philosophy aims at
-one function per container to maximize this reuse.  of course it's up
-to you to build this way rather than a single monolithic dockerfile,
-but the idea of linking containers is a technical concept at the heart
-of docker that offers a second and very different way to address the
-'remix' problem of VMs.
-
-
- Provisioning scripts. Docker images are not 'black boxes'. A
-"Dockerfile" is a simple make-like script which installs all the
-software necessary to re-create ("provision") the image.  This has
-many advantages: (a) The script is much smaller and more portable than
-the image. (b) the script can be version managed (c) the script gives
-a human readable (instead of binary) description of what software is
-installed and how. This also avoids pitfalls of traditional
-documentation of dependencies that may be too vague or out-of-sync.
-(d) Other users can build on, modify, or extend the script for their
-own needs.  All of this is what we call the he "DevOpts" approach to
-provisioning, and can be done with AMIs or other virtual machines
-using tools like Ansible, Chef, or Puppet coupled with things like
-Packer or Vagrant (or clever use of make and shell scripts).
-
-For a much better overview of this "DevOpts" approach in the
-reproducible research context and a gentle introduction to these
-tools, I highly recommend taking a look at Clark et al [2].
 
 3) You can run the docker container *locally*.  I think this is huge.
 In my experience, most researchers do their primary development
@@ -640,11 +765,6 @@ something called boot2docker, and was not very seamless early on.  It
 has gotten much better and continues to improve.)
 
 
-Related challenges:  RStudio and a consistent environment. 
-- Linked volumes 
-- linked containers 
-- signed containers? 
-
 
 4) Versioned images.  In addition to version managing the Dockerfile,
 the images themselves are versioned using a git-like hash system
@@ -661,6 +781,38 @@ bucket... for now?) and supports automated builds based on your
 dockerfiles, which acts as a kind of CI for your environment.
 Versioning and diff'ing images is a rather nice reproducibility
 feature.
+
+--------------------------------
+
+<!-- Covered elsewhere in a more integrated fashion -->
+Researchers familiar with LXC may be tempted to view the Docker
+system as little more than a creative application and marketing of an
+existing technology. However, the Docker approach adds several features
+crucial for its use in reproducible research (adapted from [Docker
+FAQ](https://docs.docker.com/faq/#what-does-docker-add-to-just-plain-lxc)):
+
+- *Portable deployment*: Docker defines a format for bundling and
+exchanging containers such that they run identically across platforms.
+
+- *Automatic builds*: Docker defines a format (Dockerfiles) that provide
+a simple, scripted way to construct containers, following the DevOpts
+philosophy.
+
+
+- *Versioning*: Docker provides git-like capibilities for tracking
+changes to a container, inspecting the history, metadata, or diff between
+versions, committing versions, rolling back changes, and incremential
+uploads and downloads that send only the differences (like `git push`
+or `git pull`).
+
+- *Component reuse*: Any container can be used as the base for any other.
+
+- *Sharing*: Docker provides a public registry (Docker Hub) where any
+user can make images avaialble to any other. (The registry itself is
+also open source so that it can be deployed privately).
+
+Each of these elements have clear implications for reproducible research.
+
 
 
 
