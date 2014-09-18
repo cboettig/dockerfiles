@@ -527,22 +527,25 @@ added effort in packaging and documenting [@Stodden_2010].
 
 
 Though Docker is not immune to these challenges, it offers a interesting 
-example of a way forward in addressing these fundamental concerns. 
+example of a way forward in addressing these fundamental concerns. Here 
+I highlight five of these features in turn:
 
-- *Local environment*
-- *Modular reuse*
-
+- Local environment
+- Modular reuse
+- Portable environments 
+- public repository for sharing
+- Versioning 
 
 ## Using Docker as a local development environment 
 
-Perhaps the most important feature of a reproducible research tool is
-that it be easy to learn and fit relatively seamlessly into existing
-workflow patterns of domain researchers.  This,
-more than any other concern, can explain the relatively low uptake
-of previously proposed solutions.  Being a new and unfamiliar tool to
-most domain scientists, Docker is far from immune to the same critique.
-Nevertheless, Docker takes us several key steps towards an approach that
-can be easily adopted in a research context.
+Perhaps the most important feature of a reproducible research tool is that
+it be easy to learn and fit relatively seamlessly into existing workflow
+patterns of domain researchers.  This, more than any other concern,
+can explain the relatively low uptake of previously proposed solutions.
+Being a new and unfamiliar tool to most domain scientists, Docker is
+far from immune to the same critique.  Nevertheless, Docker takes us
+several key steps towards an approach that can be easily adopted in a
+research context.
 
 While proponents of virtual machines for reproducible research propose
 that these machines would be available exclusively as cloud computing
@@ -626,7 +629,6 @@ to boot2docker, while a Linux user can just specify `http://localhost`:
 boot2docker ip
 ```
 
-
 Add the port `:8787` to the end of this address and paste
 it into your browser address bar, which should open to the
 RStudio welcome screen.  A user can now login with user/password
@@ -635,25 +637,59 @@ and so forth. User login and other configurations can be
 customized using environmental variables; see details at
 [https://github.com/ropensci/docker](https://github.com/ropensci/docker)
 
-### Portable computation
+
+## Portable computation & sharing
 
 A particular advantage of this approach is that the resulting
-computational environment is immediately _portable_.  This is useful not
-only for the purposes of reproducible research, where other users may seek
-to reconstruct the computational environment necessary to run the code,
-but is also of immediate value to the researcher themselves. For instance,
-a researcher might want to execute their code on a cloud server which
-has more memory or processing power then their local machine, or would
-want a co-author to help debug a particular problem.  In either case,
-the researcher can export a snapshot of their running container:
+computational environment is immediately _portable_. LXC containers
+by themselves are unlikely to run in the same way, if at all, across
+different machines, due to differences in networking, storage,
+logging and so forth. Docker handles the packaging and execution of
+a container so that it works identically across different machines,
+while exposing the necessary interfaces for networking ports, volumes,
+and so forth.  This is useful not only for the purposes of reproducible
+research, where other users may seek to reconstruct the computational
+environment necessary to run the code, but is also of immediate value
+to the researcher themselves. For instance, a researcher might want to
+execute their code on a cloud server which has more memory or processing
+power then their local machine, or would want a co-author to help debug a
+particular problem.  In either case, the researcher can export a snapshot
+of their running container:
 
 ```bash
 docker export <container-name> > container.tar
 ```
+
 and then run this identical environment on the cloud or collaborators' machine.
 
+Sharing these images is further facilitated by the Docker Hub technology. 
+While Docker images tend to be much smaller than equivalent virtual
+machines, moving around even 100's of gigabytes can be a challenge.
+In their work on virtual machines, @Dudley_2010 recommend only running
+these tools on cloud servers such as the Amazon EC2 system. As most
+researchers still develop software locally and may not have ready access
+to these resources, such a requirement adds an additional barrier to
+reuse.  Docker provides a convenient way to share any image publicly
+or privately through the Hub after creating a free account.  Docker Hub
+is both a publicly available service and also available as 
+a separate open source platform that can be deployed on private servers.
 
-## Docker remix: Building re-usable modules
+One can  share a public copy of the image just created by using the
+`docker push` command, followed by the name of the image using the command:
+
+```bash
+docker push username/r-recommended
+```
+
+If a Dockerfile is made available on a public code repository such as
+[Github](https://github.com) or [Bitbucket](https://bitbucket.org),
+the Hub can automatically build the image whenever a change is made to
+the Dockerfile, making the `push` command unnecessary. A user can update
+their local image using the `docker pull <imagename>`, which downloads
+any changes that have since been made to the copy of the image on the Hub.
+
+
+## Re-usable modules
 
 The approach of Linux Containers represented by Docker offers a technical
 solution to what is frequently seen as the primary weakness of the
@@ -697,31 +733,14 @@ docker build -t r-recommended .
 
 The key point here is that other researchers can easily build off this
 image just created, extending our work directly, rather than having
-to go back to the original image. Before others can re-use our image,
-it must be made available. Docker provides a convenient way to do this
-using the Docker Hub.
+to go back to the original image. 
 
-### Docker Hub
-
-While Docker images tend to be much smaller than equivalent virtual
-machines, moving around even 100's of gigabytes can be a challenge.
-In their work on virtual machines, @Dudley_2010 recommend only running
-these tools on cloud servers such as the Amazon EC2 system. As most
-researchers still develop software locally and may not have ready access
-to these resources, such a requirement adds an additional barrier to
-reuse.  Docker provides a convenient way to share any image publicly
-or privately through the Hub after creating a free account.  For instance,
-one can  share a public copy of the image just created by using the
-`docker push` command, followed by the name of the image using the command:
-
-```bash
-docker push username/r-recommended
-```
-
-Another user can now build directly on our image, rather than on the `ubuntu:latest`
-image used as a base in the first Dockerfile.  To do so, one simply specifies a
-different image in the `FROM` directive of the Dockerfile, followed by the lines
-required to add any additional software required.
+If this image is shared (either directly or through a Docker Hub),
+another user can now build directly on our image, rather than on the
+`ubuntu:latest` image used as a base in the first Dockerfile.  To do
+so, one simply specifies a different image in the `FROM` directive of
+the Dockerfile, followed by the lines required to add any additional
+software required.
 
 ```
 FROM username/r-recommended 
@@ -792,45 +811,107 @@ transfer the full image each time.
 
 <!-- Step back, big picture -->
 
-
-----------------
-
+# Conclusions
 
 
-<!--
-The implementation of this would nonetheless depend on the individual 
-researcher's willingness to break things into multiple containers, as
-it is indeed possible to run everything in a monolithic container. 
-This is not necessarily bad, as it simplifies the workflow (no need
-to execute and link separate containers), and can be refactored into
-multiple containers when appropriate. 
---> 
+## Best Practices
+
+The effectiveness of this approach for supporting reproducible research
+nonetheless depends on how each of these features are adopted and 
+implemented by individual researchers. I summarize a few of the choices
 
 
+- Use docker containers during development
 
-<!--
+A key feature of the Docker approach is the ability to mimic as closely
+as possible the current workflow and development practices of the user.
+Code executing inside a container on a local machine can appear identical
+to code running natively, but with the added benefit that one can simply
+recreate or snapshot and share the entire computational environment with
+a few simple commands.  This works best if researchers set up their computational
+environment in a container from the outset of the project.
 
-##  Best practices 
+- Write Dockerfiles instead installing interactive sessions.
 
-- Using Dockerfiles instead of containers
-- Using appropriate, common base images
-- Archiving tarball snapshots
-- Adding tests/checks to the Dockerfile
-- Sharing 
-- Leveraging package managers appropriately to handle software dependencies
+As we have noted already, Docker can be used in a purely interactive
+manner to record and distribute changes to a computational environment.
+However, the approach is most useful for reproducible research when
+researchers begin by defining their environment explicitly in the DevOps
+fashion by writing a Dockerfile.
+
+- Adding tests or checks to the Dockerfile
+
+Dockerfile commands need not be limited to installing software, but
+can also include execution.  This can help verify that an image has 
+build successfully with all the software necessary to run the 
+research code of interest.
+
+- Use and provide appropriate base images 
+
+Though Docker supports modular design, it remains up to the researchers
+to take advantage of it. An appropriate workflow might involve one
+Dockerfile that includes all the software dependencies a researcher
+usually uses in the course of their development, which can then be
+extended by separate docker images for particular projects.  Re-using
+existing images reduces the effort required to set up an environment,
+contributes to the standardization of computational environments within
+a field, and best leverages the ability of Docker's distribution system
+to download only differences.
+
+- Share Docker images and Dockerfiles
+
+The Docker Hub significantly reduces the barriers for making even
+large images (which can exceed the file size limits of journals common
+scientific data repositories such as Dryad and Figshare) readily available
+to other researchers.
+
+- Archive tarball snapshots
+
+Despite similar semantics to git, Docker's versioning system works rather 
+differently than version management of code.  Docker can roll back AUFS
+layers that have been added to an image, but not revert to the earlier 
+state of a particular layer.  In consequence, to preserve a bitwise identical
+snapshot of a container used to generate a given set of results, it is
+necessary to archive the image tarball itself -- one can not simply
+rely on the docker history to recover an earlier state. 
+
+
+## Limitations and future developments
+
+Docker has the potential to address shortcomings of certain existing
+approaches to reproducible research challenges that stem from recreating
+complex computational environments.  Docker also provides a promising
+case study in other issues. Its versioning, modular design, portable
+containers, and simple interface have proven successful in industry and
+could have promising implications for reproducible research in scientific
+communities. Nonetheless, these advances raise questions and challenges 
+of their own. 
+
+Docker does not provide complete virtualization but relies on the 
+Linux kernel provided by the host.  Systems research can provide insight
+on what limitations to reproducibility this introduces [e.g.  @Harji_2013].
+
+Docker is limited to 64 bit host machines, making it impossible to run on
+older hardware. 
+
+On Mac and Windows machines Docker must still be run in a fully
+virtualized environment. Though the boot2docker tool streamlines this
+process, it remains to be seen if the performance and integration with
+the host machine's OS is sufficiently seamless or creates a barrier to
+adoption by users on of these systems.
+
+It remains to be seen if Docker will be significantly adopted by any scientific community. 
+
+
 
 Upcoming features: 
 
 - signed containers? 
 
--------------
 
--->
+## Further considerations 
 
-
-
-
-# Further considerations 
+<!-- Is this really necessary? -->
 
 ### Combining virtualization with other reproducible-research tools
 
@@ -854,10 +935,10 @@ formatting & visual display, such as LaTeX or pandoc, with scripting or
 analysis tools such as R).
 
 
-<!-- Dynamic documents --> Dynamic documents are another example of an
-approach that
-
-approach [@Leisch_2002; @Peng_2011; @Xie_2013], which seek to embed
+<!-- Dynamic documents --> 
+Dynamic documents are another example of an approach that to reproducible
+research that can be facilitated through the use of Docker containers. 
+Dynamic Documents [e.g. @Leisch_2002; @Peng_2011; @Xie_2013] seek to embed
 the code required to re-generate the results within the manuscript
 itself. This process serves as a way to distribute computational
 code with publications, to ensure that methodological descriptions,
@@ -877,8 +958,6 @@ discussed here a natural complement to that of dynamic documents.
 A similar argument can be made regarding the use of workflow systems,
 which can introduce additional software dependencies even as they seek
 to make it easier to work across them.
-
-
 
 ### Impacting cultural norms? 
 
