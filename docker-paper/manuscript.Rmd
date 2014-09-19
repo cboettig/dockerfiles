@@ -195,7 +195,7 @@ language, independent of the underlying OS or even hardware itself.
 ### 2.  **Imprecise documentation**
 
 Documentation on how to install and run code associated with published
-research is another frequent barrier to replication.  @Lapp_2014 found
+research is another frequent barrier to replication. A study by Lapp [@Lapp_2014] found
 this impairs a researcher's ability to install and build the software
 necessary, as even small holes in the documentation were found to be
 major barriers, particularly for "novices" [Sensu @Garijo_2013] --
@@ -314,7 +314,7 @@ philosophy (rather than a particular tool), known as _Development_ and
 Systems _Operation_, or more frequently just "DevOps." The approach is
 characterized by scripting, rather than documenting, a description of the
 necessary dependencies for software to run, usually from the Operating
-System (OS) on up.  @Clark_2014 describes the DevOps approach along
+System (OS) on up. Clark _et al._ [@Clark_2014] describe the DevOps approach along
 with both its relevance to reproducible research and examples of its
 use in the academic research context. They identify the difficulties
 I have discussed so far in terms of effective documentation:
@@ -335,7 +335,7 @@ or "recipes" that automate setup.
 
 This elegantly addresses both the demand for simplicity of use (one
 executes a script instead of manually managing the environmental setup)
-and comprehensiveness of implementation. @Clark_2014 are careful to note
+and comprehensiveness of implementation. Clark _et al._ [@Clark_2014] are careful to note
 that this is not so much a technological shift as a philosophical one:
 
 > The primary shift that's required is not one of new tooling, as most
@@ -345,14 +345,14 @@ shift is one of philosophy.
 Nevertheless, a growing suite of tools designed explicitly for this
 purpose have rapidly replaced the use of general purpose tools (such
 as Makefiles, bash scripts) to become synonymous with the DevOps
-philosophy.  @Clark_2014 reviews many of these DevOps tools, their
+philosophy.  Clark _et al._ [@Clark_2014] reviews many of these DevOps tools, their
 different roles, and their application in reproducible research.
 
 
 I focus the remainder of this paper on one of the most recent and
 rapidly growing among these, called Docker, and the role it can play
 in reproducible research. Docker offers several promising features
-for reproducibility that go beyond the tools highlighted in @Clark_2014.
+for reproducibility that go beyond the tools highlighted in [@Clark_2014].
 Nevertheless, my goal in focusing on this technology is not to
 promote a particular solution, but to anchor the discussion of technical
 solutions to reproducibility challenges in concrete examples.
@@ -665,7 +665,7 @@ and then run this identical environment on the cloud or collaborators' machine.
 Sharing these images is further facilitated by the Docker Hub technology. 
 While Docker images tend to be much smaller than equivalent virtual
 machines, moving around even 100's of gigabytes can be a challenge.
-In their work on virtual machines, @Dudley_2010 recommend only running
+In their work on virtual machines, Dudley _et al._ [@Dudley_2010] recommend only running
 these tools on cloud servers such as the Amazon EC2 system. As most
 researchers still develop software locally and may not have ready access
 to these resources, such a requirement adds an additional barrier to
