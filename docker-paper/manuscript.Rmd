@@ -32,7 +32,7 @@ abstract: |
   examples of Docker use with a focus on the R statistical environment.
 
 Keywords:
-  - docker
+  - Docker
   - virtualization
   - reproducibility
 
@@ -84,8 +84,8 @@ Suggested paper topics include, but are not limited to:
 # Introduction 
 
 Reproducible research has received an increasing level of attention
-throughout the scientific community [e.g. @Peng_2011; @Nature_2012]
-and the public at large [e.g. @The_Economist_2013]. All steps of the
+throughout the scientific community [_e.g._ @Peng_2011; @Nature_2012]
+and the public at large [_e.g._ @The_Economist_2013]. All steps of the
 scientific process, from data collection and processing, to analyses,
 visualizations and conclusions depend ever more on computation and
 algorithms, _computational reproducibility_ has received particular
@@ -106,7 +106,7 @@ not impossible.
 
 Systems research has long concerned itself with the issues of
 computational reproducibility and the technologies that can facilitate
-those objectives [e.g. @Eide_2010, @Harji_2013]. Docker is a new but already
+those objectives [_e.g._ @Eide_2010, @Harji_2013]. Docker is a new but already
 very popular open source tool that combines many of these approaches
 in a user friendly implementation, including: (1) performing Linux
 container (LXC) based operating system (OS) level virtualization, (2)
@@ -134,7 +134,7 @@ computational reproducibility in many domain sciences has nothing
 to do with the technological approaches discussed here, but stems rather from a
 reluctance to publish the code used to generating the results in the
 first place [@Barnes_2010]. Despite extensive evidence to the contrary
-[e.g. @Ince_2012], many researchers and journals continue to assume that
+[_e.g._ @Ince_2012], many researchers and journals continue to assume that
 summary descriptions or pseudo-code provide a sufficient description of
 computational methods used in data gathering, processing, simulation,
 visualization, or analysis.  Until such code is available in the first
@@ -164,7 +164,7 @@ improved reproducibility.
 Studies focusing on code that has been made available with scientific
 publications regularly find the same common issues that pose substantial
 barriers to reproducing the original results or building on that code
-[e.g. @Lapp_2014; @Garijo_2013; @Gilbert_2012; @Collberg_2014;
+[_e.g._ @Lapp_2014; @Garijo_2013; @Gilbert_2012; @Collberg_2014;
 @Krishnamurthi_2014], which I attempt to summarize as follows.
 
 ### 1. **"Dependency Hell"**
@@ -258,8 +258,8 @@ tools: Workflows and Virtual Machines (VMs).
 <!-- FIXME Doesn't say much about the approaches. Not clear what a workflow is... -->
 
 Two dominant paradigms have emerged to address these issues so far:
-workflow software [e.g. @Altintas_2004; @Hull_2006]  and
-cloud computing on virtual machines [e.g. @Dudley_2010; @Howe_2012]. 
+workflow software [_e.g._ @Altintas_2004; @Hull_2006]  and
+cloud computing on virtual machines [_e.g._ @Dudley_2010; @Howe_2012]. 
 Workflow software provides very elegant technical solutions to the
 challenges of communication between diverse software tools, capturing
 provenance in graphically driven interfaces, and handling issues from of
@@ -357,10 +357,10 @@ Nevertheless, my goal in focusing on this technology is not to
 promote a particular solution, but to anchor the discussion of technical
 solutions to reproducibility challenges in concrete examples.
 
-<!-- Link on how to install docker -->
-<!-- Examples here are not meant as a tutorial to docker, but 
+<!-- Link on how to install Docker -->
+<!-- Examples here are not meant as a tutorial to Docker, but 
 rather to illustrate concepts a reader should be able to follow whether 
-or not they have any previous knowledge of docker and its commands -->
+or not they have any previous knowledge of Docker and its commands -->
 
 # Docker
 
@@ -417,10 +417,10 @@ Dockerfiles provide a simple script (similar to a Makefile) that defines
 exactly how to build up the image, consistent with the DevOps approach
 I mentioned previously.
 
-With a syntax that is simpler than other provisioning tools (e.g. Chef,
-Puppet, Ansible) or Continuous Integration (CI) platforms (e.g. Travis CI,
+With a syntax that is simpler than other provisioning tools (_e.g._ Chef,
+Puppet, Ansible) or Continuous Integration (CI) platforms (_e.g._ Travis CI,
 Shippable CI); users need little more than a basic familiarity with shell
-scripts and a Linux distribution software environment (e.g. Debian-based
+scripts and a Linux distribution software environment (_e.g._ Debian-based
 `apt-get`) to get started writing Dockerfiles.
 
 This approach has many advantages:
@@ -548,7 +548,7 @@ research context.
 
 While proponents of virtual machines for reproducible research propose
 that these machines would be available exclusively as cloud computing
-environments [e.g. @Dudley_2010], many researchers work _locally_, that
+environments [_e.g._ @Dudley_2010], many researchers work _locally_, that
 is, primarily with software that is installed on their laptop or desktop
 computer, and turning to cloud-based or other remote platforms only for
 certain collaborative tasks or when the work is mature enough to need
@@ -561,7 +561,7 @@ line functions for these tasks (though web based interfaces are rapidly
 filling this gap).
 
 Docker can be easily installed on most major platforms (see
-[https://docs.docker.com/installation](https://docs.docker.com/installation);
+[https://docs.Docker.com/installation](https://docs.docker.com/installation);
 On systems not already based on the Linux Kernel, such as Mac or Windows,
 this is accomplished through the use of a small VirtualBox-based VM
 running on the host OS called `boot2docker`) and run locally.  Docker
@@ -634,7 +634,7 @@ RStudio welcome screen.  A user can now login with user/password
 `rstudio/rstudio`, run R scripts, install packages, use git,
 and so forth. User login and other configurations can be
 customized using environmental variables; see details at
-[https://github.com/ropensci/docker](https://github.com/ropensci/docker)
+[https://github.com/ropensci/Docker](https://github.com/ropensci/docker)
 
 
 ## Portable computation & sharing
@@ -674,7 +674,7 @@ is both a publicly available service and also available as
 a separate open source platform that can be deployed on private servers.
 
 One can  share a public copy of the image just created by using the
-`docker push` command, followed by the name of the image using the command:
+`Docker push` command, followed by the name of the image using the command:
 
 ```bash
 docker push username/r-recommended
@@ -684,7 +684,7 @@ If a Dockerfile is made available on a public code repository such as
 [Github](https://github.com) or [Bitbucket](https://bitbucket.org),
 the Hub can automatically build the image whenever a change is made to
 the Dockerfile, making the `push` command unnecessary. A user can update
-their local image using the `docker pull <imagename>`, which downloads
+their local image using the `Docker pull <imagename>`, which downloads
 any changes that have since been made to the copy of the image on the Hub.
 
 
@@ -728,7 +728,7 @@ One can now build this Dockerfile and give it name, by running in the
 working directory:
 
 ```bash
-docker build -t username/r-recommended .
+Docker build -t username/r-recommended .
 ```
 
 The key point here is that other researchers can easily build off this
@@ -779,10 +779,10 @@ and so forth.
 
 
 In addition to version managing the Dockerfile, the images themselves are
-versioned using a git-like hash system (e.g. see `docker commit`, `docker
-push`/`docker pull`, `docker history`, `docker diff`).  Docker images and
+versioned using a git-like hash system (_e.g._ see `Docker commit`, `docker
+push`/`Docker pull`, `docker history`, `docker diff`).  Docker images and
 containers have dedicated metadata specifying the date, author, parent
-image, and other details (see `docker inspect`). One can roll back an
+image, and other details (see `Docker inspect`). One can roll back an
 image through the layers of history of its construction, then build off
 an earlier layer, or roll back changes made interactively in a
 container. For instance, here I inspect recent changes made to the
@@ -793,7 +793,7 @@ docker history ubuntu:latest
 ```
 
 One can identify an earlier version, and roll back to that version 
-just by adjusting the docker tag to match the hash of that version. 
+just by adjusting the Docker tag to match the hash of that version. 
 For instance:
 
 ```bash
@@ -805,7 +805,7 @@ If one now inspects the history, which shows that it now begins from this earlie
 docker history ubuntu:latest
 ```
 
-This same feature also means that docker can perform incremental
+This same feature also means that Docker can perform incremental
 uploads and downloads that send only the differences between images,
 (just like `git push` or `git pull` for git repositories), rather than
 transfer the full image each time. 
@@ -821,7 +821,7 @@ The effectiveness of this approach for supporting reproducible research
 nonetheless depends on how each of these features are adopted and 
 implemented by individual researchers. I summarize a few of these practices here:
 
-- _Use docker containers during development_. A key feature of the Docker
+- _Use Docker containers during development_. A key feature of the Docker
 approach is the ability to mimic as closely as possible the current
 workflow and development practices of the user.  Code executing inside
 a container on a local machine can appear identical to code running
@@ -846,7 +846,7 @@ software necessary to run the research code of interest.
 modular design, it remains up to the researchers to take advantage of
 it. An appropriate workflow might involve one Dockerfile that includes
 all the software dependencies a researcher usually uses in the course of
-their development, which can then be extended by separate docker images
+their development, which can then be extended by separate Docker images
 for particular projects.  Re-using existing images reduces the effort
 required to set up an environment, contributes to the standardization
 of computational environments within a field, and best leverages the
@@ -863,7 +863,7 @@ of code.  Docker can roll back AUFS layers that have been added to
 an image, but not revert to the earlier state of a particular layer.
 In consequence, to preserve a bitwise identical snapshot of a container
 used to generate a given set of results, it is necessary to archive the
-image tarball itself -- one can not simply rely on the docker history
+image tarball itself -- one can not simply rely on the Docker history
 to recover an earlier state.
 
 
@@ -880,7 +880,7 @@ of their own.
 
 - Docker does not provide complete virtualization but relies on the 
 Linux kernel provided by the host.  Systems research can provide insight
-on what limitations to reproducibility this introduces [e.g.  @Harji_2013].
+on what limitations to reproducibility this introduces [_e.g._  @Harji_2013].
 
 - Docker is limited to 64 bit host machines, making it impossible to run on
 older hardware. 
@@ -910,47 +910,22 @@ Upcoming features:
 
 <!-- Package managers -->
 
-It is possible, and indeed often desirable, to tackle the problem of
-dependencies at a much higher level than that of the operating system
-itself [e.g. @Ooms_2014].  For instance, it is often sufficient to
-address these concerns at the level of a particular scripting language
-rather than the level of the operating system. Most major scripting
-languages have dedicated tools for handling dependencies and versioning
-(e.g. Ruby gems, R packages, Python eggs, Perl modules, JavaScript node
-package manager); with some languages having the fortune or misfortune to
-have multiple systems. Though systems differ somewhat in their strategies
-and their effectiveness, all are generally vulnerable to changes in their
-lower-level dependencies (such as compilers, C libraries, and so forth)
-that may differ between platforms.  More pointedly, researchers whose
-work is not easily isolated to a single such environment but combines
-tools from different systems (including combining those tools used for
-formatting & visual display, such as LaTeX or pandoc, with scripting or
-analysis tools such as R).
+Using Docker containers to distribute reproducible research should be
+seen as an approach that is synergistic with, rather than an alternative
+to, other technical tools for ensuring computational reproducibility.
+Existing tools for managing dependencies for a particular language [R
+packages, Ruby gems, etc, see @Ooms_2014] can easily be employed within a
+Docker-based approach, allowing the operating-systems level virtualization
+to sidestep potential issues such as external library dependencies or
+conflicts with existing user libraries.  Other approaches that facilitate
+reproducible research also introduce additional software dependencies
+and possible points of failure [@FitzJohn_2014]. One example includes
+dynamic documents [_e.g._ @Leisch_2002; @Peng_2011; @Xie_2013] which embed
+the code required to re-generate the results within the manuscript.  As a
+result, it is necessary to package the appropriate typesetting libaries
+(_e.g._ \LaTeX) along with the code libaries such that the document executes
+successfully for different researchers and platforms.
 
-
-<!-- Dynamic documents --> 
-Dynamic documents are another example of an approach that to reproducible
-research that can be facilitated through the use of Docker containers. 
-Dynamic Documents [e.g. @Leisch_2002; @Peng_2011; @Xie_2013] seek to embed
-the code required to re-generate the results within the manuscript
-itself. This process serves as a way to distribute computational
-code with publications, to ensure that methodological descriptions,
-parameter values, figures, and so forth remain synchronized with the code,
-and to provide a way for other researchers to both tweak the code and
-'execute' the paper to reproduce the results.  While these features
-are very desirable from the perspective of reproducible research,
-they inevitably increase the number of software dependencies involved,
-including those tools that support combining code with text [e.g. @Xie_2013]
-as well as tools merely for the handling the formating and layout
-(e.g. LaTeX, pandoc).  Consequently, such a paper can fail to execute
-successfully for reasons having nothing to do with the computations
-involved in the research, but rather due to software responsible for
-implementing these dynamic features.  This problem is largely resolved by
-providing a consistent development environment, making the approaches
-discussed here a natural complement to that of dynamic documents.
-A similar argument can be made regarding the use of workflow systems,
-which can introduce additional software dependencies even as they seek
-to make it easier to work across them.
 
 ### Impacting cultural norms? 
 
@@ -968,7 +943,7 @@ that make this exchanged into a more balanced, two-way street. Another
 concern is that the difficulty imposed in preparing code to be shared,
 such as providing even semi-adequate documentation or support for other
 users to be able to install and run it in the first place is too high
-[@Stodden_2010]. Thus, lowering the barriers these barrier to re-use through
+[@Stodden_2010]. Thus, lowering these barrier to re-use through
 the appropriate infrastructure may also reduce certain cultural
 barriers to sharing.
 
@@ -1065,7 +1040,7 @@ Researchers familiar with LXC may be tempted to view the Docker
 system as little more than a creative application and marketing of an
 existing technology. However, the Docker approach adds several features
 crucial for its use in reproducible research (adapted from [Docker
-FAQ](https://docs.docker.com/faq/#what-does-docker-add-to-just-plain-lxc)):
+FAQ](https://docs.Docker.com/faq/#what-does-docker-add-to-just-plain-lxc)):
 
 - *Portable deployment*: Docker defines a format for bundling and
 exchanging containers such that they run identically across platforms.
