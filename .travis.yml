@@ -4,7 +4,6 @@ before_install:
   - sudo dpkg -i vagrant*.deb
   - sudo apt-get install linux-headers-2.6.32*
   - sudo dpkg-reconfigure virtualbox-dkms
-  - cp vagrant/Vagrantfile .
 
 install:
   - vagrant init hashicorp/precise32
