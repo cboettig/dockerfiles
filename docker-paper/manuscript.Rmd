@@ -237,7 +237,7 @@ easy to read and follow are all obstacles to resuse.-->
 
 <!-- A wide range of proposals, I focus on those at the operating system level -->
 Though a wide variety of approaches exists to work around these challenges,
-few operate on a low enough level to provide a general solution.  [@Clark_2014]
+few operate on a low enough level to provide a general solution. Clark _et al._ [@Clark_2014]
 provide an excellent description of this situation:
 
 > In scientific computing the environment was commonly managed via
@@ -269,7 +269,7 @@ scientists, and can be very successful in the communities within which
 they receive substantial adoption. Nonetheless, most workflow systems 
 struggle with relatively low total adoption overall [@Gil_2007; @Dudley_2010].
 
-[@Dudley_2010] gives several reasons that such comprehensive workflow
+Dudley & Butte [@Dudley_2010] give several reasons that such comprehensive workflow
 systems have not been more successful:
 
 > (i) efforts are not rewarded by the current academic research and
@@ -286,7 +286,7 @@ In contrast, virtual machines (VMs) offer a more direct approach. Since
 the computer Operating System (OS) already provides the software layer
 responsible for coordinating all the different elements running on the computer,
 the VM approach captures the OS and everything running on it whole-cloth.
-To make this practical, [@Dudley_2010] and [@Howe_2012]
+To make this practical, Dudley & Butte [@Dudley_2010] and Howe [@Howe_2012] both
 propose using virtual machine images that will run on the cloud, such as Amazon's
 EC2 system, which is already based upon this kind of virtualization.
 
@@ -299,8 +299,6 @@ cannot easily build on the virtual machine in a consistent and scalable way.
 If each study provided it's own virtual machine, any pipeline combining the 
 tools of multiple studies would quickly become impractical or impossible 
 to implement. 
-
-
 
 <!-- Scripted provisioning: a solution to the weaknesses of virtual machines -->
 ## A "DevOpts" approach
