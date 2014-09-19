@@ -1,9 +1,9 @@
 before_install:
-  - apt-get update && apt-get install dpkg-dev virtualbox-dkms wget
+  - sudo apt-get update && sudo apt-get install dpkg-dev virtualbox-dkms wget
   - wget http://files.vagrantup.com/packages/a40522f5fabccb9ddabad03d836e120ff5d14093/vagrant_1.3.5_x86_64.deb
-  - dpkg -i vagrant*.deb
-  - apt-get install linux-headers-$(uname -r)
-  - dpkg-reconfigure virtualbox-dkms
+  - sudo dpkg -i vagrant*.deb
+  - sudo apt-get install linux-headers-$(uname -r)
+  - sudo dpkg-reconfigure virtualbox-dkms
   - cp vagrant/Vagrantfile .
 
 install:
