@@ -10,9 +10,8 @@ install:
 
 script:
   - vagrant --version
-    #  - vagrant up
+  - vagrant up
 
-  #  - vagrant up
   #- vagrant ssh
   #- curl -sSL https://get.docker.io/ubuntu/ | sudo sh
   
