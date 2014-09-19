@@ -10,8 +10,8 @@ install:
 
 script:
   - vagrant --version
-  - vagrant up
-
+  - VBoxManage --version
+  # - vagrant up
   #- vagrant ssh
   #- curl -sSL https://get.docker.io/ubuntu/ | sudo sh
   
