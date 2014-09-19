@@ -620,9 +620,10 @@ boot2docker terminal on Mac or Windows client), run:
 sudo docker run -d -p 8787:8787 cboettig/ropensci
 ```
 
-That will take a while to download the image the first time you run
-it. A boot2docker user will then need to determine the ip address assigned
-to boot2docker, while a Linux user can just specify `http://localhost`:
+That will take a while to download the image the first time you run it. A
+boot2docker user will then need to determine the ip address assigned
+to boot2docker as shown below, while a Linux user can just specify
+`http://localhost`.
 
 ```bash
 boot2docker ip
@@ -719,7 +720,7 @@ RUN apt-get -y install r-recommended
 
 This acts like a software dependency; but unlike other software, a
 Dockerfile must have exactly one dependency (one `FROM` line). Note that
-a particular version of the dependency can be specified using the `:`.
+a particular version of the dependency can be specified using the `:` notation.
 One can in fact be much more precise, declaring not only version numbers
 like `ubuntu:14:04`, but specific cryptographic hashes that ensure we
 get the exact same image every time.
@@ -913,7 +914,7 @@ Upcoming features:
 Using Docker containers to distribute reproducible research should be
 seen as an approach that is synergistic with, rather than an alternative
 to, other technical tools for ensuring computational reproducibility.
-Existing tools for managing dependencies for a particular language [R
+Existing tools for managing dependencies for a particular language [_e.g._ R
 packages, Ruby gems, etc, see @Ooms_2014] can easily be employed within a
 Docker-based approach, allowing the operating-systems level virtualization
 to sidestep potential issues such as external library dependencies or
@@ -947,12 +948,6 @@ users to be able to install and run it in the first place is too high
 the appropriate infrastructure may also reduce certain cultural
 barriers to sharing.
 
-
-
-
-
-
-
 # Acknowledgements
 
 CB acknowledges support from NSF grant DBI-1306697, and also from the
@@ -965,7 +960,9 @@ this manuscript.
 # References 
 
 
-
+<!-- These links don't appear in either pdf or rendered version, but provide some automatic linking on the Github rendering 
+It would be nice if pandoc's reference syntax were closer to markdown's standard link syntax (e.g. always use [], bracket each reference)
+-->
 
 
 [@Lapp_2014]: https://storify.com/hlapp/reproducibility-repeatability-bigthink
