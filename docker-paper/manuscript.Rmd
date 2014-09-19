@@ -14,20 +14,19 @@ address:
       110 Shaffer Rd,
       Santa Cruz, CA 95050, USA 
 abstract: |
-  As computational work becomes more and more integral to many aspects
-  of scientific research, computational reproducibility has become an
-  issue of increasing importance to computer systems researchers and
-  domain scientists alike. Though computational reproducibility seems 
-  more straight forward than replicating physical experiments, the 
-  immense, rapidly growing and frequently changing nature of computer
-  environments makes being able to reproduce work in a way that others
-  can understand and extend it a serious challenge.  In this paper, I
-  explore common reasons that code developed for a gien research project
+  As computational work becomes more and more integral to many aspects of
+  scientific research, computational reproducibility has become an issue
+  of increasing importance to computer systems researchers and domain
+  scientists alike. Though computational reproducibility seems more
+  straight forward than replicating physical experiments, the complex
+  and rapidly changing nature of computer environments makes being able
+  to reproduce and extend such work a serious challenge.  In this paper,
+  I explore common reasons that code developed for one research project
   cannot be successfully executed or extended by subsequent researchers.
   I review current approaches to these issues, including virtual machines
   and workflow systems, and their limitations. I then examine how the
   popular emerging technology Docker combines several areas from systems
-  research - suc has operating system virtualization, cross-platform
+  research - such as operating system virtualization, cross-platform
   portability, modular re-usable elements, versioning, and a 'DevOps'
   philosophy, to address these challenges.  I illustrate this with several
   examples of Docker use with a focus on the R statistical environment.
@@ -657,7 +656,7 @@ particular problem.  In either case, the researcher can export a snapshot
 of their running container:
 
 ```bash
-docker export <container-name> > container.tar
+docker export container-name > container.tar
 ```
 
 and then run this identical environment on the cloud or collaborators' machine.
@@ -714,7 +713,8 @@ R statistical computing environment to a basic Ubuntu Linux distribution.
 
 ```
 FROM ubuntu:latest
-RUN apt-get update && apt-get -y install r-recommended
+RUN apt-get update 
+RUN apt-get -y install r-recommended
 ```
 
 This acts like a software dependency; but unlike other software, a
@@ -728,7 +728,7 @@ One can now build this Dockerfile and give it name, by running in the
 working directory:
 
 ```bash
-docker build -t r-recommended .
+docker build -t username/r-recommended .
 ```
 
 The key point here is that other researchers can easily build off this
@@ -744,7 +744,8 @@ software required.
 
 ```
 FROM username/r-recommended 
-RUN apt-get update && apt-get -y install r-cran-teachingdemos
+RUN apt-get update
+RUN apt-get -y install r-cran-matrix
 ```
 
 Though this shows only very minimal examples that add a single piece of
@@ -818,62 +819,52 @@ transfer the full image each time.
 
 The effectiveness of this approach for supporting reproducible research
 nonetheless depends on how each of these features are adopted and 
-implemented by individual researchers. I summarize a few of the choices
+implemented by individual researchers. I summarize a few of these practices here:
 
-
-- Use docker containers during development
-
-A key feature of the Docker approach is the ability to mimic as closely
-as possible the current workflow and development practices of the user.
-Code executing inside a container on a local machine can appear identical
-to code running natively, but with the added benefit that one can simply
-recreate or snapshot and share the entire computational environment with
-a few simple commands.  This works best if researchers set up their computational
+- _Use docker containers during development_. A key feature of the Docker
+approach is the ability to mimic as closely as possible the current
+workflow and development practices of the user.  Code executing inside
+a container on a local machine can appear identical to code running
+natively, but with the added benefit that one can simply recreate or
+snapshot and share the entire computational environment with a few simple
+commands.  This works best if researchers set up their computational
 environment in a container from the outset of the project.
 
-- Write Dockerfiles instead installing interactive sessions.
+- _Write Dockerfiles instead installing interactive sessions_. As we
+have noted already, Docker can be used in a purely interactive manner to
+record and distribute changes to a computational environment.  However,
+the approach is most useful for reproducible research when researchers
+begin by defining their environment explicitly in the DevOps fashion by
+writing a Dockerfile.
 
-As we have noted already, Docker can be used in a purely interactive
-manner to record and distribute changes to a computational environment.
-However, the approach is most useful for reproducible research when
-researchers begin by defining their environment explicitly in the DevOps
-fashion by writing a Dockerfile.
+- _Adding tests or checks to the Dockerfile_. Dockerfile commands need
+not be limited to installing software, but can also include execution.
+This can help verify that an image has build successfully with all the
+software necessary to run the research code of interest.
 
-- Adding tests or checks to the Dockerfile
+- _Use and provide appropriate base images_. Though Docker supports
+modular design, it remains up to the researchers to take advantage of
+it. An appropriate workflow might involve one Dockerfile that includes
+all the software dependencies a researcher usually uses in the course of
+their development, which can then be extended by separate docker images
+for particular projects.  Re-using existing images reduces the effort
+required to set up an environment, contributes to the standardization
+of computational environments within a field, and best leverages the
+ability of Docker's distribution system to download only differences.
 
-Dockerfile commands need not be limited to installing software, but
-can also include execution.  This can help verify that an image has 
-build successfully with all the software necessary to run the 
-research code of interest.
+- _Share Docker images and Dockerfiles_. The Docker Hub significantly
+reduces the barriers for making even large images (which can exceed the
+file size limits of journals common scientific data repositories such
+as Dryad and Figshare) readily available to other researchers.
 
-- Use and provide appropriate base images 
-
-Though Docker supports modular design, it remains up to the researchers
-to take advantage of it. An appropriate workflow might involve one
-Dockerfile that includes all the software dependencies a researcher
-usually uses in the course of their development, which can then be
-extended by separate docker images for particular projects.  Re-using
-existing images reduces the effort required to set up an environment,
-contributes to the standardization of computational environments within
-a field, and best leverages the ability of Docker's distribution system
-to download only differences.
-
-- Share Docker images and Dockerfiles
-
-The Docker Hub significantly reduces the barriers for making even
-large images (which can exceed the file size limits of journals common
-scientific data repositories such as Dryad and Figshare) readily available
-to other researchers.
-
-- Archive tarball snapshots
-
-Despite similar semantics to git, Docker's versioning system works rather 
-differently than version management of code.  Docker can roll back AUFS
-layers that have been added to an image, but not revert to the earlier 
-state of a particular layer.  In consequence, to preserve a bitwise identical
-snapshot of a container used to generate a given set of results, it is
-necessary to archive the image tarball itself -- one can not simply
-rely on the docker history to recover an earlier state. 
+- _Archive tarball snapshots_. Despite similar semantics to git, Docker's
+versioning system works rather differently than version management
+of code.  Docker can roll back AUFS layers that have been added to
+an image, but not revert to the earlier state of a particular layer.
+In consequence, to preserve a bitwise identical snapshot of a container
+used to generate a given set of results, it is necessary to archive the
+image tarball itself -- one can not simply rely on the docker history
+to recover an earlier state.
 
 
 ## Limitations and future developments
@@ -887,31 +878,33 @@ could have promising implications for reproducible research in scientific
 communities. Nonetheless, these advances raise questions and challenges 
 of their own. 
 
-Docker does not provide complete virtualization but relies on the 
+- Docker does not provide complete virtualization but relies on the 
 Linux kernel provided by the host.  Systems research can provide insight
 on what limitations to reproducibility this introduces [e.g.  @Harji_2013].
 
-Docker is limited to 64 bit host machines, making it impossible to run on
+- Docker is limited to 64 bit host machines, making it impossible to run on
 older hardware. 
 
-On Mac and Windows machines Docker must still be run in a fully
+- On Mac and Windows machines Docker must still be run in a fully
 virtualized environment. Though the boot2docker tool streamlines this
 process, it remains to be seen if the performance and integration with
 the host machine's OS is sufficiently seamless or creates a barrier to
 adoption by users on of these systems.
 
-It remains to be seen if Docker will be significantly adopted by any scientific community. 
+- Most importantly, it remains to be seen if Docker will be significantly
+adopted by any scientific research or teaching community. 
 
-
+<!--
 
 Upcoming features: 
 
 - signed containers? 
 
+-->
 
 ## Further considerations 
 
-<!-- Is this really necessary? -->
+<!-- Is this really necessary? Can it be more consise? -->
 
 ### Combining virtualization with other reproducible-research tools
 
@@ -989,9 +982,9 @@ barriers to sharing.
 
 CB acknowledges support from NSF grant DBI-1306697, and also from the
 Sloan Foundation support through the rOpenSci project. CB also wishes
-to thank Dirk Eddelbuettel, Rich FitzJohn, Yihui Xie, Titus Brown,
-John Stanton-Geddes and many others for helpful discussions about
-reproducibility, virtualization, and Docker that have helped shape
+to thank Scott Chamberlain, Dirk Eddelbuettel, Rich FitzJohn, Yihui Xie,
+Titus Brown, John Stanton-Geddes and many others for helpful discussions
+about reproducibility, virtualization, and Docker that have helped shape
 this manuscript.
 
 # References 
