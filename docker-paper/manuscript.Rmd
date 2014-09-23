@@ -132,7 +132,7 @@ of interest to both computer systems research and domain scientists.
 It is worth observing from the outset that the primary barrier to
 computational reproducibility in many domain sciences has nothing
 to do with the technological approaches discussed here, but stems rather from a
-reluctance to publish the code used to generating the results in the
+reluctance to publish the code used in generating the results in the
 first place [@Barnes_2010]. Despite extensive evidence to the contrary
 [_e.g._ @Ince_2012], many researchers and journals continue to assume that
 summary descriptions or pseudo-code provide a sufficient description of
@@ -171,7 +171,7 @@ barriers to reproducing the original results or building on that code
 
 A recent study by researchers at the University of Arizona found that
 less than 50% of software could even be successfully built or installed
-[@Collberg_2014], and in an ongoing effort by other researchers to
+[@Collberg_2014] and similar results are seen in an ongoing effort by other researchers to
 replicate that study [@Krishnamurthi_2014]. Installing or building software
 necessary to run the code in question assumes the ability to recreate
 the computational environment of the original researchers. 
@@ -185,7 +185,7 @@ the computational environment of the original researchers.
 <!-- Omit this? -->
 
 Differences in numerical evaluation, such as arise in floating point
-arithmetic or computers or even ambiguities in standardized programming
+arithmetic or even ambiguities in standardized programming
 languages ("order-of-evaluation" problems) can be responsible for
 differing results between or even within the same computational platform
 [@Ince_2012]. Such issues make it difficult to restrict the true dependencies
@@ -200,7 +200,7 @@ this impairs a researcher's ability to install and build the software
 necessary, as even small holes in the documentation were found to be
 major barriers, particularly for "novices" [Sensu @Garijo_2013] --
 where novices may be experts in nearby languages but unfamiliar with
-the package managers and other tools of the language involved). This
+the package managers and other tools of the language involved. This
 same problem is discussed in [@Clark_2014].  Imprecise documentation
 goes well beyond issues of the software environment itself: incomplete
 documentation of parameters involved meant as few as 30% of analyses
@@ -259,10 +259,10 @@ tools: Workflows and Virtual Machines (VMs).
 
 Two dominant paradigms have emerged to address these issues so far:
 workflow software [_e.g._ @Altintas_2004; @Hull_2006]  and
-cloud computing on virtual machines [_e.g._ @Dudley_2010; @Howe_2012]. 
+virtual machines [_e.g._ @Dudley_2010; @Howe_2012]. 
 Workflow software provides very elegant technical solutions to the
 challenges of communication between diverse software tools, capturing
-provenance in graphically driven interfaces, and handling issues from of
+provenance in graphically driven interfaces, and handling issues from 
 versioning dependencies to data access.  Workflow solutions are often 
 built by well-funded collaborations between domain scientists and computer
 scientists, and can be very successful in the communities within which 
@@ -301,7 +301,7 @@ tools of multiple studies would quickly become impractical or impossible
 to implement. 
 
 <!-- Scripted provisioning: a solution to the weaknesses of virtual machines -->
-## A "DevOpts" approach
+## A "DevOps" approach
 
 The problems highlighted here are not unique to _academic_ software,
 but impact software development in general. While the academic research
@@ -390,7 +390,7 @@ image must be based on a Linux system with Linux-compatible software, which
 includes (R, Python, Matlab, and most other scientific programming needs). [^4] 
 
 Sharing the Linux kernel makes Docker much more light-weight and higher
-performance than complete virtual machines -- a typical desktop computer
+performing than complete virtual machines -- a typical desktop computer
 could run no more than a few virtual machines at once but 
 would have no trouble running 100's of Docker containers (a container
 is simply the term for running instance of an image). This feature
@@ -453,7 +453,7 @@ installing the software environment, which will verify that the setup
 has been successful.  This can be important in addressing the issue of
 code-rot which I discuss next.
 
-- It is straight-straight forward for other users to extend or customize 
+- It is straightforward for other users to extend or customize 
 the resulting image by editing the script directly. 
 
 [^3]: The situation is in fact slightly better than the virtual machine
@@ -487,7 +487,7 @@ effected the function of a particular piece of code.
 
 <!-- FIXME move this later --> 
 To simplify this process, Docker also supports *Automated Builds*
-through the Docker Hub.  This acts as a kind of Continuous Integration
+through the Docker Hub ([hub.docker.com](http://hub.docker.com)).  This acts as a kind of Continuous Integration
 (CI) service that verifies the image builds correctly whenever the
 Dockerfile is updated, particularly if the Dockerfile includes checks
 for the environment. The Hub also provides a convenient distribution
@@ -530,7 +530,7 @@ I highlight five of these features in turn:
 - Local environment
 - Modular reuse
 - Portable environments 
-- public repository for sharing
+- Public repository for sharing
 - Versioning 
 
 ## Using Docker as a local development environment 
@@ -555,8 +555,8 @@ rely more on the graphic interface tools for tasks such as managing
 files, text editing, debugging, IDEs, or interacting with version
 control systems.  Scientific computing on remote machines, by contrast,
 still relies largely on potentially less familiar text based command
-line functions for these tasks (though web based interfaces are rapidly
-filling this gap).
+line functions for these tasks (though web based interfaces like RStudio
+Server are rapidly filling this gap).
 
 Docker can be easily installed on most major platforms (see
 [https://docs.Docker.com/installation](https://docs.docker.com/installation);
@@ -585,8 +585,8 @@ used just as well with interactive shells from other languages such as
 
 [^2]: External windows, such graphics windows cannot be opened directly
 from the container in this setup.  Graphics would have to be saved to
-desk as raster or vector files and viewed on the host OS, until a better
-solution can be found. RStudio-server is one way around this.
+disk as raster or vector files and viewed on the host OS, until a better
+solution can be found. RStudio Server ([rstudio.com/products/rstudio/#Server](http://rstudio.com/products/rstudio/#Server)) is one way around this.
 
 
 ### Using RStudio Server 
@@ -598,10 +598,9 @@ another key component in making this system accessible to most
 domain scientists. Because the RStudio IDE is written completely with
 standard web languages (Javascript, CSS, and HTML), its web-based 
 RStudio Server looks and feels identical to its popular desktop IDE.
-<!--
 RStudio Server provides a way to interact with R on a remote environment
-without the latency, X tunnelling, etc typically involved in running R
-on a remote server. -->
+without the latency, X tunnelling, and so forth typically involved in running R
+on a remote server. 
 
 RStudio server provides users a way to interact with R,
 the file system, git, text editors, and graphics running on a Docker
@@ -768,7 +767,7 @@ of such services each in their own container, making it easy to break
 computational elements down into logically reusable chunks that come,
 batteries included, with everything they need to run reproducibly.
 A researcher could connect a container providing a computational 
-environment for a different language to this same MySQL container, 
+environment for a different language to this same PostgreSQL container, 
 and so forth.
 
 
@@ -829,7 +828,7 @@ snapshot and share the entire computational environment with a few simple
 commands.  This works best if researchers set up their computational
 environment in a container from the outset of the project.
 
-- _Write Dockerfiles instead installing interactive sessions_. As we
+- _Write Dockerfiles instead of installing interactive sessions_. As we
 have noted already, Docker can be used in a purely interactive manner to
 record and distribute changes to a computational environment.  However,
 the approach is most useful for reproducible research when researchers
@@ -882,7 +881,7 @@ Linux kernel provided by the host.  Systems research can provide insight
 on what limitations to reproducibility this introduces [_e.g._  @Harji_2013].
 
 - Docker is limited to 64 bit host machines, making it impossible to run on
-older hardware. 
+older hardware (at this time).
 
 - On Mac and Windows machines Docker must still be run in a fully
 virtualized environment. Though the boot2docker tool streamlines this
@@ -890,16 +889,13 @@ process, it remains to be seen if the performance and integration with
 the host machine's OS is sufficiently seamless or creates a barrier to
 adoption by users on of these systems.
 
+- Potential computer security issues may still need to be evaluated. Among other
+changes, future support for digitally signing Docker images may make it easier
+to build off of only trusted binaries. 
+
 - Most importantly, it remains to be seen if Docker will be significantly
 adopted by any scientific research or teaching community. 
 
-<!--
-
-Upcoming features: 
-
-- signed containers? 
-
--->
 
 ## Further considerations 
 
@@ -938,11 +934,11 @@ fear a it will be primarily a one-way street: more technical savvy
 researchers then themselves can benefit from their hard work, while
 they may not benefit from the work produced by others.  Lowering the
 technical barriers to reuse provides immediate practical benefits
-that make this exchanged into a more balanced, two-way street. Another
+that make this exchange into a more balanced, two-way street. Another
 concern is that the difficulty imposed in preparing code to be shared,
 such as providing even semi-adequate documentation or support for other
 users to be able to install and run it in the first place is too high
-[@Stodden_2010]. Thus, lowering these barrier to re-use through
+[@Stodden_2010]. Thus, lowering these barriers to re-use through
 the appropriate infrastructure may also reduce certain cultural
 barriers to sharing.
 
@@ -1041,7 +1037,7 @@ FAQ](https://docs.Docker.com/faq/#what-does-docker-add-to-just-plain-lxc)):
 exchanging containers such that they run identically across platforms.
 
 - *Automatic builds*: Docker defines a format (Dockerfiles) that provide
-a simple, scripted way to construct containers, following the DevOpts
+a simple, scripted way to construct containers, following the DevOps
 philosophy.
 
 
