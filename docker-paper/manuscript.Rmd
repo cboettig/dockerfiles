@@ -2,17 +2,11 @@
 title: "An introduction to Docker for reproducible research, with examples from the R environment"
 author: 
   - name: Carl Boettiger
-    affiliation: 
+    affiliation:
       l1: Center for Stock Assessment Research, 
       l2: 110 Shaffer Rd, Santa Cruz, CA 95050, USA 
     email: cboettig(at)gmail.com
     footnote: Corresponding author
-address: 
-  - code: cstar
-    address: | 
-      Center for Stock Assessment Research,
-      110 Shaffer Rd,
-      Santa Cruz, CA 95050, USA 
 abstract: |
   As computational work becomes more and more integral to many aspects of
   scientific research, computational reproducibility has become an issue
