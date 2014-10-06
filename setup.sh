@@ -4,15 +4,11 @@
 # Here we just set a few defaults, though ideally you may want different values
 SSH=${SSH:=22}
 RSTUDIO=${RSTUDIO:=8787}
-
+USER=${USER:=user}
 
 # NOTE! Assumes login configured with SSH keys.  https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2
 ## Note: All run as root unless otherwise stated
 
-
-
-## Stay updated, for security purposes.  
-apt-get -q update && apt-get -qy dist-upgrade
 
 ####################################################
 
@@ -39,17 +35,20 @@ curl -sSL https://get.docker.io/ubuntu/ | sh
 ## Create a new, not-root user: (uses the local user name)
 adduser --gecos '' $USER
 ## Grant the user superuser privileges
-RUN echo "$USER ALL=(ALL:ALL) ALL" >> /etc/sudoers
+echo "$USER ALL=(ALL:ALL) ALL" >> /etc/sudoers
 
 ## Now that we have a non-root user, Prevent any root login over ssh:
-sed -i 's/PermitRootLogin yes/PermitRootLogin no' /etc/ssh/sshd_config
+sed -i 's/PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config
+## Must explicitly declare this due to Ubuntu's default "UsePAM yes" 
+echo "PasswordAuthentication no" >> /etc/ssh/sshd_config
 
 ## Allow only our user to login:
 echo "UseDNS no" >> /etc/ssh/sshd_config
 echo "AllowUsers $USER" >> /etc/ssh/sshd_config
 
+
 ## Change the default ssh port
-sed -i "s/Port 22/Port $SSH" /etc/ssh/sshd_config
+sed -i "s/Port 22/Port $SSH/" /etc/ssh/sshd_config
 
 ## NOTE! We'll need to use this on all future ssh calls, e.g.:
 ##    ssh -p $SSH $USER@ip-addreess
@@ -66,7 +65,7 @@ reload ssh
 apt-get install ufw
 
 ## Docker needs to ufw to allow forwarding and port 2375
-sed -i s/DEFAULT_FORWARD_POLICY="DROP"/DEFAULT_FORWARD_POLICY="ACCEPT" /etc/default/ufw
+sed -i s/DEFAULT_FORWARD_POLICY=\"DROP\"/DEFAULT_FORWARD_POLICY=\"ACCEPT\"/ /etc/default/ufw
 ufw reload
 ufw allow 2375/tcp
 
@@ -74,12 +73,15 @@ ufw allow 2375/tcp
 ufw allow $SSH/tcp
 ufw allow $RSTUDIO/tcp
 
-
+ufw enable
 ## Other services I might run: 
 # ufw allow $SSH-CONTAINER/tcp
 # ufw allow $GITLAB-SSH/tcp
 # ufw allow $GITLAB-WEB/tcp
 # ufw allow $DRONE/tcp
+
+
+###################################################
 
 ## Install fail2ban
 apt-get install fail2ban 
@@ -89,9 +91,26 @@ cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
 # adjust [ssh] port section to monitor non-standard $SSH port in use.
 
 
-## Instal Tripwire.  Requires interactive work
+###################################################
+
+## Install Tripwire.  Requires interactive work. 
+## Assumes someone is going to read & interpret the log files
 # apt-get install -y tripwire 
 
 
+####################################################
 
+
+## Some nice terminal settings ##
+
+## Recursive history search 
+echo '"\e[5~": history-search-backward' >> /etc/inputrc 
+echo '"\e[6~": history-search-backward' >> /etc/inputrc
+
+
+
+## Stay updated, for security purposes.  
+apt-get update && apt-get dist-upgrade -y
+## Clean up
+apt-get autoremove -y
 
