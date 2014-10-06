@@ -1,46 +1,97 @@
 #!/bin/bash
 
-## Stay updated 
-sudo apt-get -q update && sudo apt-get -qy dist-upgrade
+## SET your environmental variables to the sockets you want to use first
+# Here we just set a few defaults, though ideally you may want different values
+SSH=${SSH:=22}
+RSTUDIO=${RSTUDIO:=8787}
 
 
-## UFW -- Uncomplicated firewall configuration
-sudo apt-get install ufw
+# NOTE! Assumes login configured with SSH keys.  https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2
+## Note: All run as root unless otherwise stated
 
+
+
+## Stay updated, for security purposes.  
+apt-get -q update && apt-get -qy dist-upgrade
+
+####################################################
+
+
+# Allocate some swap space, particularly if we're on a small droplet 
+fallocate -l 1G /swapfile
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
+## Make these changes permanent
+echo "/swapfile       none    swap    sw      0       0" >> /etc/fstab
+chown root:root /swapfile # redundant?
+chmod 0600 /swapfile      # redundant? 
+
+
+##################################################
+
+# Install the latest version of Docker 
+curl -sSL https://get.docker.io/ubuntu/ | sh
+
+
+##################################################
+
+## Create a new, not-root user: (uses the local user name)
+adduser --gecos '' $USER
+## Grant the user superuser privileges
+RUN echo "$USER ALL=(ALL:ALL) ALL" >> /etc/sudoers
+
+## Now that we have a non-root user, Prevent any root login over ssh:
+sed -i 's/PermitRootLogin yes/PermitRootLogin no' /etc/ssh/sshd_config
+
+## Allow only our user to login:
+echo "UseDNS no" >> /etc/ssh/sshd_config
+echo "AllowUsers $USER" >> /etc/ssh/sshd_config
+
+## Change the default ssh port
+sed -i "s/Port 22/Port $SSH" /etc/ssh/sshd_config
+
+## NOTE! We'll need to use this on all future ssh calls, e.g.:
+##    ssh -p $SSH $USER@ip-addreess
+## Adjusting our local ssh/config is the best way to do this. 
+
+
+## Reload to implement the new settings
+reload ssh
+
+
+####################################################
+
+## Install UFW -- Uncomplicated firewall configuration
+apt-get install ufw
 
 ## Docker needs to ufw to allow forwarding and port 2375
-sudo sed -i s/DEFAULT_FORWARD_POLICY="DROP"/DEFAULT_FORWARD_POLICY="ACCEPT" /etc/default/ufw
-sudo ufw reload
-sudo ufw allow 2375/tcp
+sed -i s/DEFAULT_FORWARD_POLICY="DROP"/DEFAULT_FORWARD_POLICY="ACCEPT" /etc/default/ufw
+ufw reload
+ufw allow 2375/tcp
 
-## Allow services: 
-sudo ufw allow $DRONE/tcp
-sudo ufw allow $SSH/tcp
-sudo ufw allow $SSH-CONTAINER/tcp
-sudo ufw allow $GITLAB-SSH/tcp
-sudo ufw allow $GITLAB-WEB/tcp
+## Allow ports for these services: 
+ufw allow $SSH/tcp
+ufw allow $RSTUDIO/tcp
 
 
-sudo apt-get install fail2ban 
-sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+## Other services I might run: 
+# ufw allow $SSH-CONTAINER/tcp
+# ufw allow $GITLAB-SSH/tcp
+# ufw allow $GITLAB-WEB/tcp
+# ufw allow $DRONE/tcp
+
+## Install fail2ban
+apt-get install fail2ban 
+
+## Configure fail2ban
+cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
 # adjust [ssh] port section to monitor non-standard $SSH port in use.
 
-## Requires interactive work
-sudo apt-get install -y tripwire 
+
+## Instal Tripwire.  Requires interactive work
+# apt-get install -y tripwire 
 
 
 
-# Allocate some swap space for a digitalocean image
-sudo fallocate -l 1G /swapfile
-sudo chmod 600 /swapfile
-sudo mkswap /swapfile
-sudo swapon /swapfile
-sudo echo "/swapfile       none    swap    sw      0       0" >> /etc/fstab
 
-# Redundant? 
-sudo chown root:root /swapfile
-sudo chmod 0600 /swapfile
-
-
-# Install docker
-curl -sSL https://get.docker.io/ubuntu/ | sudo sh
