@@ -1,27 +1,44 @@
 ## Use as a base for ssh to run as an ssh image 
-FROM docker/ropensci:dev
+FROM rocker/ropensci 
 MAINTAINER Carl Boettiger "cboettig@gmail.com"
 
-
-## Nice behavior 
+## Hardwire custom configuration
 RUN echo '"\e[5~": history-search-backward' >> /etc/inputrc && echo '"\e[6~": history-search-backward' >> /etc/inputrc
 
-## Update
-RUN sudo apt-get -qq update && sudo apt-get -qy dist-upgrade 
-RUN apt-get -y install vim 
+## Package installations
+RUN apt-get update && apt-get install -y vim
 
-## Custom packages
 
-## Create a non-root user & a home directory for them
-RUN adduser --disabled-password --gecos '' docker
 
-## (Optionally) add the user to sudoers (without password)
+## Install my packages
+## Note: these are for convenience / common use.  
+## Stongly suggested that mature projects provide their
+## own Dockerfiles based on a robust public image.  
+## 
+RUN apt-get update && apt-get install -y \
+    r-cran-R2jags \ 
+    r-cran-snowfall \
+    r-cran-expm \
+&& install2.r --error \
+    coda \
+    emdbook \
+    kernlab \
+    MASS \
+    mcmc \
+    MCMCpack \
+    modeest \
+    pander \
+    R2jags \
+&& installGithub.r \
+    cboettig/pdg_control \
+    cboettig/nonparametric-bayes \
+    jrnold/ggthemes \ 
+    hadley/reshape \ 
+&& rm -rf /tmp/downloaded_packages
+
+
+## Optionally gives user sudo rights and sets as default user
 RUN adduser docker sudo
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-
-# Switch to non-root user & set default working directory.
 USER docker
-
-## Just add development tools? 
-## Alias common utilities as containers? (R, labnotebook, pandoc, even vim)  Is this silly? (e.g. forfit using shared libraries)
 

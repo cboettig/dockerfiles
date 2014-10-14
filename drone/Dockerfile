@@ -5,6 +5,7 @@
 #     docker run -p 8080:80 --privileged mattgruter/drone
 # And point your browser to http://localhost:8080/install.
 
+# Adapted from Matthias Grüter <matthias@grueter.name>
 
 ## README
 # Doubledocker: Docker in Docker
@@ -18,29 +19,27 @@
 # Known Issues: Attempting to connect to the docker daemon from the outside fails: 
 #    Get http://localhost:49153/v1.12/containers/json: net/http: transport closed before response was received
 
-FROM ubuntu
-MAINTAINER Matthias Grüter <matthias@grueter.name>
+FROM debian:testing 
+MAINTAINER Carl Boettiger <cboettig@ropensci.org>
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update
-RUN apt-get install -y curl 
+RUN apt-get update && apt-get install -y \
+    curl \
+    htop \
+    wget
 RUN curl -s https://get.docker.io/ubuntu/ | sh
 RUN echo 'DOCKER_OPTS="-H :2375 -H unix:///var/run/docker.sock"' >> /etc/default/docker
-
 VOLUME /var/lib/docker
-
 EXPOSE 2375
 
 ## CMD /etc/init.d/docker start && sleep 1 && tail -F /var/log/upstart/docker.log
-
 ##### drone Dockerfile setup #########################3
-# FROM mattgruter/doubledocker
+# Adapted FROM mattgruter/doubledocker
 
-RUN apt-get -y install htop
-RUN apt-get -y install wget
-RUN wget http://downloads.drone.io/latest/drone.deb
-RUN dpkg -i drone.deb
+RUN wget http://downloads.drone.io/latest/drone.deb \
+  && dpkg -i drone.deb \
+  && rm drone.deb
 
 EXPOSE 80
 
