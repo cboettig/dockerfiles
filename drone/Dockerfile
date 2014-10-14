@@ -19,7 +19,7 @@
 # Known Issues: Attempting to connect to the docker daemon from the outside fails: 
 #    Get http://localhost:49153/v1.12/containers/json: net/http: transport closed before response was received
 
-FROM debian:testing 
+FROM ubuntu:latest 
 MAINTAINER Carl Boettiger <cboettig@ropensci.org>
 
 ENV DEBIAN_FRONTEND noninteractive
