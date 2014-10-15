@@ -1,3 +1,6 @@
+# For some reason this isn't working when dockerized. Works fine 
+# only when run in foreground natively.
+# 
 # use: 
 # run in deamonized:
 #     docker run -d -p 56780:56780 lifx
