@@ -60,7 +60,7 @@ pull:
 	docker pull rocker/rstudio
 	docker pull rocker/hadleyverse
 	docker pull rocker/ropensci
-
+	docker pull cboettig/strata
 
 # delete: docker rmi eddelbuettel/debian-r-base eddelbuettel/ubuntu-r-base eddelbuettel/debian-r-devel eddelbuettel/debian-rstudio eddelbuettel/ubuntu-r-devel eddelbuettel/ubuntu-rstudio eddelbuettel/debian-hadleyverse eddelbuettel/ubuntu-hadleyverse
 

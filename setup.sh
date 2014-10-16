@@ -123,7 +123,7 @@ apt-get update && apt-get dist-upgrade -y
 ## Clean up
 apt-get autoremove -y
 
-
+apt-get install git
 ###########################################
 
 ## Install nsenter:
@@ -142,18 +142,32 @@ docker run --name='rstudio' -d -p $RSTUDIO:8787 -e USER=$USER -e PASSWORD=$PASSW
 # useradd -m $USER && echo "$USER:$PASSWORD" | chpasswd
 # chown -R $USER:$USER /home/$USER
 
-
+## build drone image from source:
+git clone https://github.com/drone/drone.git
+docker build -t drone/drone drone/
 ## Deploy Drone CI on 8080 (Then visit localhost:8080/install)
-docker run --name='drone' -d -p $DRONE:80 --privileged cboettig/drone
+docker run --name='drone' -d -p $DRONE:80 --privileged drone/drone
 
 
-## Deploy Gitlab on 10080
-docker run --name='gitlab' -d -p $GITLAB_SSH:22 -p $GITLAB_WEB:80 \
-  -e "GITLAB_PORT=$GITLAB_WEB" -e "GITLAB_SSH_PORT=$GITLAB_SSH" sameersbn/gitlab
-# Visit http://localhost:10080 and login using the default username and password: root/5iveL!fe
+## Deploy Gitlab: we need some data containers running first
+docker run --name=postgresql -d \
+  -e 'DB_NAME=gitlabhq_production' -e 'DB_USER=gitlab' -e 'DB_PASS=somepassword' \
+  -v /opt/postgresql/data:/var/lib/postgresql \
+  sameersbn/postgresql:latest
+docker run --name=redis -d sameersbn/redis:latest
+
+## launch gitlab, linking to them containers:
+docker run --name=gitlab -d \
+  --link postgresql:postgresql \
+  --link redis:redisio \
+  -p $GITLAB_WEB:80 -p $GITLAB_SSH:22 \
+  -v /opt/gitlab/data:/home/git/data \
+    sameersbn/gitlab:7.3.2-1
+# Specific version matters. versions get software updates without numbers changing.
+# Visit http://localhost:$GITLAB_WEB and login using the default username and password: root/5iveL!fe
 
 ## Deploy RStudio's shiny-server on 3838
-# docker run -d -p $SHINY:3838 cboettig/shiny
+docker run -d -p $SHINY:3838 cboettig/shiny
 
 ## Deploy OpenCPU on 443 
 #docker run -t -d -p 5080:8006 -p 443:8007 jeroenooms/opencpu-dev
