@@ -123,7 +123,13 @@ apt-get update && apt-get dist-upgrade -y
 ## Clean up
 apt-get autoremove -y
 
-apt-get install git
+
+## Install some useful tools: 
+apt-get install -y \
+  git \     # we'll use below to install certain things
+  vnstat    # Monitors network use (1 TB/month free on small instances)
+
+
 ###########################################
 
 ## Install nsenter:
