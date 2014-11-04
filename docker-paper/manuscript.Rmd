@@ -1,5 +1,5 @@
 ---
-title: "An introduction to Docker for reproducible research, with examples from the R environment"
+title: "An introduction to Docker for reproducible research"
 author: 
   - name: Carl Boettiger
     affiliation:
@@ -41,7 +41,7 @@ output:
 ---
 
 
-<!--
+<!-- Excerpt from the CALL FOR PAPERS:
 There is increasing interest in promoting repeatable and reproducible research
 in computer science.  A community gains confidence in scientific claims when
 the experiments supporting those claims are published, examined, and repeated.
@@ -110,15 +110,26 @@ Docker's market success has largely focused on the needs of businesses
 in deploying web applications and the potential for a lightweight
 alternative to full virtualization, these features have potentially
 important implications for systems research in the area of scientific
-reproducibility. In this paper, I seek to set these issues in the context
-of reproducibility throughout the various domain sciences where 
-computation plays an ever-increasing role, but where researchers are
-largely unaware of the concerns or technologies involved in making these
-computations more reproducible, extensible, and portable to other researchers. 
-In so doing, I highlight elements of the Docker platform that should be
-of interest to both computer systems research and domain scientists.
+reproducibility. 
 
-<!-- Map here! -->
+In this paper, I seek to address two audiences. First, that of the domain
+scientist, those conducting research in ecology, bioinformatics, economics,
+psychology and so many other disciplines in which computation plays an 
+ever-increasing role. I seek to help this audience become more aware of the 
+concerns and challenges in making these computations more reproducible, extensible, 
+and portable to other researchers, and highlight Docker as platform to address 
+these challenges. The second audience is that of the computer systems researchers:
+readers familiar with both the challenges to reproducibility (versioning,
+software dependencies, etc.) and the technical components underlying Docker (virtualization,
+LXC containers, jails, hashes, etc.), but who may be unfamiliar with Docker software. 
+I hope the domain scientist will be motivated to try Docker as a tool to address
+reproducibility. Meanwhile, I expect the systems researcher to see Docker technology as
+an area ripe for further systems research (e.g. to what extent can differences between 
+Linux kernels frustrate reproducibility in a Docker image?) rather than as a tool
+for their own study (because Docker applies only to software at the level above
+the Linux kernel, it will be of little use in making studies of differences in 
+kernel behavior, hardware performance, execution times, and so forth reproducible.)
+
 
 
 ### A cultural problem
@@ -290,7 +301,7 @@ While the approach sidesteps the need to either install or even document the
 dependencies, this also makes it more difficult for other researchers to
 understand, evaluate, or alter those dependencies.  Moreover, other research
 cannot easily build on the virtual machine in a consistent and scalable way. 
-If each study provided it's own virtual machine, any pipeline combining the 
+If each study provided its own virtual machine, any pipeline combining the 
 tools of multiple studies would quickly become impractical or impossible 
 to implement. 
 
@@ -517,7 +528,7 @@ environment available for reuse if it does not involve a significant
 added effort in packaging and documenting [@Stodden_2010]. 
 
 
-Though Docker is not immune to these challenges, it offers a interesting 
+Though Docker is not immune to these challenges, it offers an interesting 
 example of a way forward in addressing these fundamental concerns. Here 
 I highlight five of these features in turn:
 
@@ -697,7 +708,7 @@ There are at least two ways in which Docker supports this kind of
 extensibility.
 
 
-First, Docker facilitates modular reuse by build one container on top of
+First, Docker facilitates modular reuse by building one container on top of
 another.  Rather than copy a Dockerfile and then start adding more lines
 to the bottom, one can declare a new Dockerfile is built on an old one
 using the `FROM` directive. Here is an example Dockerfile that adds the
@@ -911,8 +922,8 @@ reproducible research also introduce additional software dependencies
 and possible points of failure [@FitzJohn_2014]. One example includes
 dynamic documents [_e.g._ @Leisch_2002; @Peng_2011; @Xie_2013] which embed
 the code required to re-generate the results within the manuscript.  As a
-result, it is necessary to package the appropriate typesetting libaries
-(_e.g._ \LaTeX) along with the code libaries such that the document executes
+result, it is necessary to package the appropriate typesetting libraries
+(_e.g._ \LaTeX) along with the code libraries such that the document executes
 successfully for different researchers and platforms.
 
 
@@ -925,7 +936,7 @@ discussed here. Nevertheless, it may be worth considering how solutions
 to these technical barriers can influence the cultural landscape as well.
 Many researchers may be reluctant to publish code today because they
 fear a it will be primarily a one-way street: more technical savvy
-researchers then themselves can benefit from their hard work, while
+researchers than themselves can benefit from their hard work, while
 they may not benefit from the work produced by others.  Lowering the
 technical barriers to reuse provides immediate practical benefits
 that make this exchange into a more balanced, two-way street. Another
