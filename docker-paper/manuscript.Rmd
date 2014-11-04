@@ -176,18 +176,15 @@ barriers to reproducing the original results or building on that code
 
 A recent study by researchers at the University of Arizona found that
 less than 50% of software could even be successfully built or installed
-[@Collberg_2014] and similar results are seen in an ongoing effort by other researchers to
-replicate that study [@Krishnamurthi_2014]. Installing or building software
-necessary to run the code in question assumes the ability to recreate
-the computational environment of the original researchers. 
-<!-- Time savings. Personal reproducibility. Collaboration. Teaching. --> 
-<!-- Figure 1: technical reproducibility stack
-1. Operating system
-2. Workflow systems 
-3. Package managers 
-4. Dynamic documents
--->
-<!-- Omit this? -->
+[@Collberg_2014]. Though sufficiently knowledgeable users may be able
+to overcome the issues in at least some of these cases [^6], similar
+results are seen in an ongoing effort by other researchers to replicate
+that study [@Krishnamurthi_2014], and has also been observed in other
+indepedent studies [@Lapp_2014; @Garijo_2013].  Installing or building
+software necessary to run the code in question assumes the ability to
+recreate the computational environment of the original researchers.
+
+[^6]: See discussion at https://gist.github.com/pbailis/9629050 and https://gist.github.com/samth/9641364
 
 Differences in numerical evaluation, such as arise in floating point
 arithmetic or even ambiguities in standardized programming
@@ -374,7 +371,8 @@ the Go programming language.-->
 Docker is an open source project that builds on many long-familiar
 technologies from operating systems research: LXC containers,
 virtualization of the OS, and a hash-based or git-like versioning
-and differencing system, among others. 
+and differencing system, among others (see [docs.docker.com/faq](https://docs.docker.com/faq/#what-does-docker-add-to-just-plain-lxc) for
+an excellent overview of what Docker adds to plain LXC). 
 
 I introduce the most relevant concepts from Docker through the 
 context of the four challenges for reproducible research I have
@@ -490,17 +488,6 @@ Docker provides a simple way to confirm whether or not code rot has
 effected the function of a particular piece of code.
 
 
-<!-- FIXME move this later --> 
-To simplify this process, Docker also supports *Automated Builds*
-through the Docker Hub ([hub.docker.com](http://hub.docker.com)).  This acts as a kind of Continuous Integration
-(CI) service that verifies the image builds correctly whenever the
-Dockerfile is updated, particularly if the Dockerfile includes checks
-for the environment. The Hub also provides a convenient distribution
-service, freely storing the pre-built images, along with their metadata,
-for download and reuse by others. The Docker Hub is a free service and
-an open source software product so that users can run their own private
-versions of the Hub on their own servers, for instance, if security of
-the data or the longevity of the public platform is a concern.
 
 
 ### 4. Barriers to adoption and re-use
@@ -549,13 +536,16 @@ far from immune to the same critique.  Nevertheless, Docker takes us
 several key steps towards an approach that can be easily adopted in a
 research context.
 
+<!-- Part of the reason is better image distribution-->
 While proponents of virtual machines for reproducible research propose
 that these machines would be available exclusively as cloud computing
 environments [_e.g._ @Dudley_2010], many researchers work _locally_, that
 is, primarily with software that is installed on their laptop or desktop
 computer, and turning to cloud-based or other remote platforms only for
 certain collaborative tasks or when the work is mature enough to need
-increased computational power.  Working locally allows a researcher to
+increased computational power. 
+
+
 rely more on the graphic interface tools for tasks such as managing
 files, text editing, debugging, IDEs, or interacting with version
 control systems.  Scientific computing on remote machines, by contrast,
@@ -593,6 +583,8 @@ from the container in this setup.  Graphics would have to be saved to
 disk as raster or vector files and viewed on the host OS, until a better
 solution can be found. RStudio Server ([rstudio.com/products/rstudio/#Server](http://rstudio.com/products/rstudio/#Server)) is one way around this.
 
+
+<!--
 
 ### Using RStudio Server 
 
@@ -639,6 +631,7 @@ and so forth. User login and other configurations can be
 customized using environmental variables; see details at
 [https://github.com/ropensci/Docker](https://github.com/ropensci/docker)
 
+-->
 
 ## Portable computation & sharing
 
@@ -664,17 +657,19 @@ docker export container-name > container.tar
 
 and then run this identical environment on the cloud or collaborators' machine.
 
-Sharing these images is further facilitated by the Docker Hub technology. 
-While Docker images tend to be much smaller than equivalent virtual
-machines, moving around even 100's of gigabytes can be a challenge.
-In their work on virtual machines, Dudley _et al._ [@Dudley_2010] recommend only running
-these tools on cloud servers such as the Amazon EC2 system. As most
-researchers still develop software locally and may not have ready access
-to these resources, such a requirement adds an additional barrier to
-reuse.  Docker provides a convenient way to share any image publicly
-or privately through the Hub after creating a free account.  Docker Hub
-is both a publicly available service and also available as 
-a separate open source platform that can be deployed on private servers.
+Sharing these images is further facilitated by the Docker Hub technology
+([hub.docker.com](http://hub.docker.com)).  While Docker images tend
+to be much smaller than equivalent virtual machines, moving around
+even 100's of gigabytes can be a challenge.  The Docker Hub provides a
+convenient distribution service, freely storing the pre-built images,
+along with their metadata, for download and reuse by others. The Docker
+Hub is a free service and an open source software product so that users
+can run their own private versions of the Hub on their own servers, for
+instance, if security of the data or the longevity of the public platform
+is a concern.  Docker also supports *Automated Builds* through the Docker
+Hub.  This acts as a kind of Continuous Integration (CI) service that
+verifies the image builds correctly whenever the Dockerfile is updated,
+particularly if the Dockerfile includes checks for the environment.
 
 One can  share a public copy of the image just created by using the
 `Docker push` command, followed by the name of the image using the command:
@@ -691,9 +686,11 @@ their local image using the `Docker pull <imagename>`, which downloads
 any changes that have since been made to the copy of the image on the Hub.
 
 
+
+
 ## Re-usable modules
 
-The approach of Linux Containers represented by Docker offers a technical
+The approach of Docker offers a technical
 solution to what is frequently seen as the primary weakness of the
 standard virtual machine approach to reproducibility - reusing and
 remixing elements.  To some extent this is already addressed by the
@@ -715,23 +712,25 @@ using the `FROM` directive. Here is an example Dockerfile that adds the
 R statistical computing environment to a basic Ubuntu Linux distribution.
 
 ```
-FROM ubuntu:latest
+FROM ubuntu:14.04
 RUN apt-get update 
 RUN apt-get -y install r-recommended
 ```
 
 This acts like a software dependency; but unlike other software, a
-Dockerfile must have exactly one dependency (one `FROM` line). Note that
-a particular version of the dependency can be specified using the `:` notation.
-One can in fact be much more precise, declaring not only version numbers
-like `ubuntu:14:04`, but specific cryptographic hashes that ensure we
-get the exact same image every time.
+Dockerfile must have exactly one dependency (one `FROM` line). Note
+that a particular version of the dependency can be specified using the
+`:` notation (similarly, package managers like `apt` show here can be
+directed to install specific versions, if desired. One can in fact be much
+more precise by specific cryptographic hash of a particular binary image.
+In practice, using hashes in FROM directives may be undesirable as it also
+avoids adopting security updates that may have been made to the base image.
 
-One can now build this Dockerfile and give it name, by running in the
+One can name and build this Dockerfile by running in the
 working directory:
 
 ```bash
-Docker build -t username/r-recommended .
+docker build -t username/r-recommended .
 ```
 
 The key point here is that other researchers can easily build off this
@@ -740,7 +739,7 @@ to go back to the original image.
 
 If this image is shared (either directly or through a Docker Hub),
 another user can now build directly on our image, rather than on the
-`ubuntu:latest` image used as a base in the first Dockerfile.  To do
+`ubuntu:14.04` image used as a base in the first Dockerfile.  To do
 so, one simply specifies a different image in the `FROM` directive of
 the Dockerfile, followed by the lines required to add any additional
 software required.
@@ -765,15 +764,16 @@ running a python environment to analyze the data:
 docker run -d --name db training/postgres
 docker run -d -P --link db:db training/webapp python app.py
 ```
+This separates the task fo running the database (first line) from
+the application used to analyze the data (second line), allowing a more
+modular approach to reuse: another researcher could use the same database
+container while connecting it to different scripts.  
 
 Unlike the much more heavyweight virtual machine approach, containers
 are implemented in way such that a single computer can easily run 100s
 of such services each in their own container, making it easy to break
 computational elements down into logically reusable chunks that come,
 batteries included, with everything they need to run reproducibly.
-A researcher could connect a container providing a computational 
-environment for a different language to this same PostgreSQL container, 
-and so forth.
 
 
 <!-- Transition -->
@@ -789,10 +789,10 @@ image, and other details (see `Docker inspect`). One can roll back an
 image through the layers of history of its construction, then build off
 an earlier layer, or roll back changes made interactively in a
 container. For instance, here I inspect recent changes made to the
-`ubuntu:latest` image:
+`ubuntu:14.04` image:
 
 ```bash
-docker history ubuntu:latest
+docker history ubuntu:14.04
 ```
 
 One can identify an earlier version, and roll back to that version 
@@ -800,12 +800,12 @@ just by adjusting the Docker tag to match the hash of that version.
 For instance:
 
 ```bash
-docker tag 25f ubuntu:latest
+docker tag 25f ubuntu:14.04
 ```
 If one now inspects the history, which shows that it now begins from this earlier point:
 
 ```bash
-docker history ubuntu:latest
+docker history ubuntu:14.04
 ```
 
 This same feature also means that Docker can perform incremental
@@ -862,13 +862,15 @@ as Dryad and Figshare) readily available to other researchers.
 
 - _Archive tarball snapshots_. Despite similar semantics to git, Docker's
 versioning system works rather differently than version management
-of code.  Docker can roll back AUFS layers that have been added to
+of code.  Docker can roll back layers[^5] that have been added to
 an image, but not revert to the earlier state of a particular layer.
 In consequence, to preserve a bitwise identical snapshot of a container
 used to generate a given set of results, it is necessary to archive the
 image tarball itself -- one can not simply rely on the Docker history
 to recover an earlier state.
 
+[^5]: Technically AUFS (advanced multi layered unification filesystem )
+layers, see [wikipedia.org/wiki/aufs](http://en.wikipedia.org/wiki/aufs)
 
 ## Limitations and future developments
 
