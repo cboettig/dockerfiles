@@ -132,10 +132,10 @@ apt-get install -y \
 
 ###########################################
 
-## Install nsenter:
-docker run -v /usr/local/bin:/target jpetazzo/nsenter
+## Install nsenter: -- not needed now, docker 1.3 has docker exec -it <containerid> bash
+# docker run -v /usr/local/bin:/target jpetazzo/nsenter
 ## alias appropriately
-echo 'function dock { sudo nsenter -m -u -n -i -p -t `docker inspect --format {{.State.Pid}} "$1"` /bin/bash; }' >> ~/.bashrc
+# echo 'function dock { sudo nsenter -m -u -n -i -p -t `docker inspect --format {{.State.Pid}} "$1"` /bin/bash; }' >> ~/.bashrc
 
 
 # Launch containerized services: 
