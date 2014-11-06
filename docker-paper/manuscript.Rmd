@@ -679,36 +679,50 @@ existing package managers on common Linux distributions such as `apt`
 on Debian. These also permit installing either specific or only the
 latest version.
 
-Consider the following Dockerfile, which 
-
-```
-FROM rocker/ropensci:latest
-RUN git clone https://github.com/ropensci/RNeXML.git /rnexml
-RUN Rscript -e 'devtools::install("/rnexml"); devtools::check("/rnexml")'
-```
-
-
-A Dockerfile can have only a single `FROM` line, while sometimes it may
-be necessary to build on the computational environment provided by more
-than one container. To address this, Docker defines a syntax for linking
-multiple containers together:
-
-
-Each one acts as a building block providing just what is necessary to
-run one particular service or element, and exposing just what is necessary
-to link it together with other blocks.  
+<!--
+Consider the following Dockerfile to illustrate this modular reuse. This
+is the complete Dockerfile required to create the computational environment
+required for a particular manuscript:
 
 ```bash
-docker run --name tex -v /usr/local/texlive rocker/texlive
-docker run -dP --volumes-from tex \
+FROM rocker/ropensci:latest
+MAINTAINER Carl Boettiger cboettig@ropensci.org
+RUN git clone https://github.com/ropensci/RNeXML.git /rnexml
+RUN Rscript -e 'devtools::install("/rnexml")'
+```
+
+The first line contains the FROM directive, indicating that this Dockerfile
+builds on the existing Docker image `rocker/ropensci`, hosted on the Docker
+Hub.  For this approach to be effective for reproducible one must take care 
+that the base image and it's Dockerfile recipe are available from a persistant
+archive.
+
+The second line is optional, declaring minimal metadata regarding the 
+contact information for the image maintainer. The third line copys the
+project onto the image and the fourth installs the necessary software that
+has not been provided by the base image. Projects using less standard
+environments may require more instructions.  
+-->
+
+While a Dockerfile can have only a single `FROM` line, sometimes it may
+be necessary to build on the computational environment provided by more
+than one container. To address this, Docker defines a syntax for linking
+multiple containers together.  This allows each container to act as a
+building block providing just what is necessary to run one particular
+service or element, and exposing just what is needed to link it together
+with other blocks.  For instance, one could have one container running
+a PostgreSQL database which serves data to another container running a
+python environment to analyze the data:
+
+<!--
+```bash
+docker run --name texlive -v /usr/local/texlive rocker/texlive
+docker run -dP --volumes-from texlive \
 -e PATH=$PATH:/usr/local/texlive/2014/bin/x86_64-linux/ \
 rocker/rstudio 
 ```
+-->
 
-
-For instance, one could have one
-container running a PostgreSQL database which serves data to another container
-running a python environment to analyze the data:
 
 ```bash
 docker run -d --name db training/postgres
