@@ -170,6 +170,17 @@ $endfor$
 
 
 
+ %% Omit the copyright space.
+%  \makeatletter
+%  \def\@copyrightspace{}
+%  \makeatother
+
+  %% Fill in the title and author list for your paper.
+%  \title{$title$}
+%  \author{$author.name$ \thanks{Copyright is held by the author(s)}}
+%  \renewcommand\footnotemark{}
+
+\toappear{Copyright is held by the author(s)}
 \begin{document}
 
 \title{$title$}
@@ -217,8 +228,8 @@ $endfor$
 % 1st. author
 $for(author)$
   \alignauthor
-  $author.name$
-  \titlenote{$author.footnote$}\\
+  $author.name$ %  \titlenote{$author.footnote$}
+  \\
   \affaddr{\small $author.affiliation.l1$}\\
   \affaddr{\small $author.affiliation.l2$}\\
   \email{\small $author.email$}
@@ -232,12 +243,12 @@ $abstract$
 \end{abstract}
 
 % A category with the (minimum) three required fields
-\category{H.4}{Information Systems Applications}{Miscellaneous}
+%\category{H.4}{Information Systems Applications}{Miscellaneous}
 %A category including the fourth, optional field follows...
 %\category{D.2.8}{Software Engineering}{Metrics}[complexity measures, performance measures]
 
-\terms{Systems, Reproducible Research}
-$if(keywords)$ \keywords{ $for(keywords)$$keywords$, $endfor$ }$endif$
+%\terms{Systems, Reproducible Research}
+%$if(keywords)$ \keywords{ $for(keywords)$$keywords$, $endfor$ }$endif$
 
 $body$
 

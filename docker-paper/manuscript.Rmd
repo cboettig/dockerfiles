@@ -368,18 +368,29 @@ or not they have any previous knowledge of Docker and its commands -->
 <!-- Docker is an open source (Apache Version 2) software platform written in
 the Go programming language.-->
 
-Docker is an open source project that builds on many long-familiar
-technologies from operating systems research: LXC containers,
-virtualization of the OS, and a hash-based or git-like versioning
-and differencing system, among others (see [docs.docker.com/faq](https://docs.docker.com/faq/#what-does-docker-add-to-just-plain-lxc) for
-an excellent overview of what Docker adds to plain LXC). 
+Docker is an open source project that builds on many
+long-familiar technologies from operating systems research:
+LXC containers, virtualization of the OS, and a hash-based
+or git-like versioning and differencing system, among others (see
+[docs.docker.com/faq](https://docs.docker.com/faq/#what-does-docker-add-to-just-plain-lxc)
+for an excellent overview of what Docker adds to plain LXC). The
+official documentation [docs.docker.com](https://docs.docker.com)
+already provides a thorough introduction in how to use Docker
+software; here my focus is on describing the implications this
+has for reproducible research.  Readers may also find it helpful
+to see more detailed examples of using Docker to capture, share,
+and interact with a specific computational environments. Some such
+examples, along with more detailed documentation on use can be found at
+[github.com/rocker-org](https://github.com/rocker-org/rocker).
+
 
 I introduce the most relevant concepts from Docker through the context
 of the four challenges for reproducible research I have discussed above.
 In brief, these challenges can be addressed by distributing a Dockerfile
 capable of reconstructing the researcher's development environment,
 ideally along with depositing the corresponding binary Docker image in
-an appropriate repository. 
+an appropriate repository.
+
 
 ### 1. Docker images: resolving 'Dependency Hell' 
 
@@ -564,7 +575,7 @@ see, modular reuse makes this latter strategy efficient).
 
 Rather than put the burden on the researcher to adopt
 a very different workflow, the researcher can thus use their familiar editors,
-etc, while immediately benefiting from the fact their computations can
+etc., while immediately benefiting from the fact their computations can
 be easily deployed on the cloud or the machines of collaborators without
 any further effort than installing Docker software. The docker approach
 is particularly well suited for moving between local and cloud platforms
@@ -673,7 +684,7 @@ First, Docker facilitates modular reuse by building one container on top
 of another through the use of `FROM` directive in Dockerfiles. This acts
 like a software dependency; but unlike other software, a Dockerfile must
 have exactly one dependency (one `FROM` line). Particular version of
-the dependency can be specified using the `:` notation, or ommitted to
+the dependency can be specified using the `:` notation, or omitted to
 default to the latest version. To install software, Dockerfiles leverage
 existing package managers on common Linux distributions such as `apt`
 on Debian. These also permit installing either specific or only the
@@ -728,7 +739,7 @@ rocker/rstudio
 docker run -d --name db training/postgres
 docker run -d -P --link db:db training/webapp python app.py
 ```
-This separates the task fo running the database (first line) from
+This separates the task for running the database (first line) from
 the application used to analyze the data (second line), allowing a more
 modular approach to reuse: another researcher could use the same database
 container while connecting it to different scripts. 

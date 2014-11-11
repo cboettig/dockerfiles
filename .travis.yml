@@ -1,20 +1,29 @@
+language: c
+
+env:
+  global:
+    - "HOST_IP=$(/sbin/ifconfig venet0:0 | grep 'inet addr' | awk -F: '{print $2}' | awk '{print $1}')"
+    - DOCKER_HOST=tcp://$HOST_IP:2375
+    - DOCKER_PORT_RANGE=2400:2500
+    - SLIRP_PORTS=$(seq 2375 2500)
+
 before_install:
-  - sudo apt-get -qq update && sudo apt-get -qy install dpkg-dev virtualbox-dkms wget
-  - wget http://files.vagrantup.com/packages/a40522f5fabccb9ddabad03d836e120ff5d14093/vagrant_1.3.5_x86_64.deb
-  - sudo dpkg -i vagrant*.deb
-  - sudo apt-get install linux-headers-2.6.32*
-  - sudo dpkg-reconfigure virtualbox-dkms
+  - sudo sh -c "wget -qO- https://get.docker.io/gpg | apt-key add -"
+  - sudo sh -c "echo deb http://get.docker.io/ubuntu docker main > /etc/apt/sources.list.d/docker.list"
+  - echo exit 101 | sudo tee /usr/sbin/policy-rc.d
+  - sudo chmod +x /usr/sbin/policy-rc.d
 
 install:
-  - vagrant init hashicorp/precise32
+  - bundle install
+  - sudo apt-get -qqy update
+  - sudo apt-get -qqy install lxc lxc-docker slirp
+  - sudo sudo usermod -aG docker "$USER"
+
+before_script:
+  - "sekexe/run 'mount -t tmpfs -o size=8g tmpfs /var/lib/docker && docker -d -H tcp://0.0.0.0:2375' &"
+  - "while ! docker info &> /dev/null ; do sleep 1; done"
+  - docker pull rocker/rstudio
 
 script:
-  - vagrant --version
-  - VBoxManage --version
-  # - vagrant up
-  #- vagrant ssh
-  #- curl -sSL https://get.docker.io/ubuntu/ | sudo sh
-  
-#script:
-#  - sudo docker -d 
-#  - sudo docker run ubuntu echo "hello world" 
+  - docker version
+
