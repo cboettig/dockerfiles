@@ -1,7 +1,9 @@
 image: tianon/dind
+
 script:
   - docker --version
   - docker run --rm -it rocker/rstudio R --version
+
 notify:
   email:
     recipients:
