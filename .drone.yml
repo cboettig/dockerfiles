@@ -1,6 +1,7 @@
-image: cboettig/rstudio
+image: tianon/dind
 script:
-  - R --version
+  - docker --version
+  - docker run --rm -it rocker/rstudio R --version
 notify:
   email:
     recipients:
