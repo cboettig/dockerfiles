@@ -152,8 +152,12 @@ docker run --name='rstudio' -d -p $RSTUDIO:8787 -e USER=$USER -e PASSWORD=$PASSW
 git clone https://github.com/drone/drone.git
 docker build -t drone/drone drone/
 ## Deploy Drone CI on 8080 (Then visit localhost:8080/install)
-docker run --name='drone' -d -p $DRONE:80 --privileged drone/drone
-
+docker run --name drone -d -p 88:80 \
+-v /var/run/docker.sock:/var/run/docker.sock \
+-t \
+-e DRONE_GITHUB_CLIENT=$DRONE_GITHUB_CLIENT \
+-e DRONE_GITHUB_SECRET=$DRONE_GITHUB_SECRET \
+drone/drone
 
 ## Deploy Gitlab: we need some data containers running first
 docker run --name=postgresql -d \

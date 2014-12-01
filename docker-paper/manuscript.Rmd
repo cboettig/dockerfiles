@@ -32,6 +32,9 @@ Keywords:
 
 bibliography: components/references.bib
 csl: components/acm-sig-proceedings.csl
+citecolor: black
+linkcolor: black
+urlcolor: black
 
 output: 
   pdf_document:
@@ -633,7 +636,7 @@ verifies the image builds correctly whenever the Dockerfile is updated,
 particularly if the Dockerfile includes checks for the environment.
 
 One can  share a public copy of the image just created by using the
-`Docker push` command, followed by the name of the image using the command:
+`docker push` command, followed by the name of the image using the command:
 
 ```bash
 docker push username/r-recommended
@@ -643,7 +646,7 @@ If a Dockerfile is made available on a public code repository such as
 [Github](https://github.com) or [Bitbucket](https://bitbucket.org),
 the Hub can automatically build the image whenever a change is made to
 the Dockerfile, making the `push` command unnecessary. A user can update
-their local image using the `Docker pull <imagename>`, which downloads
+their local image using the `docker pull <imagename>`, which downloads
 any changes that have since been made to the copy of the image on the Hub.
 
 
@@ -737,7 +740,8 @@ rocker/rstudio
 
 ```bash
 docker run -d --name db training/postgres
-docker run -d -P --link db:db training/webapp python app.py
+docker run -d -P --link db:db training/webapp \
+  python app.py
 ```
 This separates the task for running the database (first line) from
 the application used to analyze the data (second line), allowing a more
@@ -760,10 +764,10 @@ to run reproducibly.
 
 
 In addition to version managing the Dockerfile, the images themselves are
-versioned using a git-like hash system (_e.g._ see `Docker commit`, `docker
-push`/`Docker pull`, `docker history`, `docker diff`).  Docker images and
+versioned using a git-like hash system (_e.g._ see `docker commit`, `docker
+push`/`docker pull`, `docker history`, `docker diff`).  Docker images and
 containers have dedicated metadata specifying the date, author, parent
-image, and other details (see `Docker inspect`). One can roll back an
+image, and other details (see `docker inspect`). One can roll back an
 image through the layers of history of its construction, then build off
 an earlier layer, or roll back changes made interactively in a
 container. For instance, here I inspect recent changes made to the
