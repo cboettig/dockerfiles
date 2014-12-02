@@ -4,7 +4,6 @@ MAINTAINER Carl Boettiger "cboettig@gmail.com"
 
 ## Hardwire custom configuration
 RUN echo '"\e[5~": history-search-backward' >> /etc/inputrc && echo '"\e[6~": history-search-backward' >> /etc/inputrc
-
 ## Package installations
 RUN apt-get update && apt-get install -y vim
 
@@ -29,16 +28,17 @@ RUN apt-get update && apt-get install -y \
     modeest \
     pander \
     R2jags \
+    deSolve \
 && installGithub.r \
+    cboettig/populationdynamics \
     cboettig/pdg_control \
     cboettig/nonparametric-bayes \
-    jrnold/ggthemes \ 
-    hadley/reshape \ 
+    jrnold/ggthemes \
+&& install2.r --error --repos http://r-nimble.org nimble \
 && rm -rf /tmp/downloaded_packages
 
 
 ## Optionally gives user sudo rights and sets as default user
-RUN adduser docker sudo
-RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+RUN adduser docker sudo && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER docker
 
