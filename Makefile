@@ -2,6 +2,20 @@
 # Run in parallel: make -j
 FLAGS=--no-cache
 
+pull:
+	docker pull r-base
+	docker pull rocker/r-base
+	docker pull rocker/r-devel
+	docker pull rocker/rstudio
+	docker pull rocker/hadleyverse
+	docker pull rocker/ropensci
+	docker pull rocker/rstudio-daily
+	docker pull cboettig/strata
+	docker pull cboettig/nonparametric-bayes
+	docker pull cboettig/pdg-control
+	docker pull cboettig/bce
+
+
 all:
 	$(MAKE) rocker 
 	$(MAKE) post-rocker
@@ -52,18 +66,6 @@ ubuntu-rstudio: ~/Documents/code/rocker/ubuntu/rstudio/Dockerfile
 	docker build $(FLAGS) -t eddelbuettel/ubuntu-rstudio ~/Documents/code/rocker/ubuntu/rstudio
 ubuntu-hadleyverse: ~/Documents/code/rocker/ubuntu/hadleyverse/Dockerfile
 	docker build $(FLAGS) -t eddelbuettel/ubuntu-hadleyverse ~/Documents/code/rocker/ubuntu/hadleyverse
-
-
-pull:
-	docker pull rocker/r-base
-	docker pull rocker/r-devel
-	docker pull rocker/rstudio
-	docker pull rocker/hadleyverse
-	docker pull rocker/ropensci
-	docker pull cboettig/strata
-	docker pull cboettig/nonparametric-bayes
-	docker pull cboettig/pdg-control
-	docker pull cboettig/bce
 
 
 # delete: docker rmi eddelbuettel/debian-r-base eddelbuettel/ubuntu-r-base eddelbuettel/debian-r-devel eddelbuettel/debian-rstudio eddelbuettel/ubuntu-r-devel eddelbuettel/ubuntu-rstudio eddelbuettel/debian-hadleyverse eddelbuettel/ubuntu-hadleyverse
