@@ -2,13 +2,6 @@
 FROM rocker/ropensci 
 MAINTAINER Carl Boettiger "cboettig@gmail.com"
 
-## Hardwire custom configuration
-RUN echo '"\e[5~": history-search-backward' >> /etc/inputrc && echo '"\e[6~": history-search-backward' >> /etc/inputrc
-## Package installations
-RUN apt-get update && apt-get install -y vim
-
-
-
 ## Install my packages
 ## Note: these are for convenience / common use.  
 ## Stongly suggested that mature projects provide their
