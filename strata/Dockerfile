@@ -33,5 +33,7 @@ RUN apt-get update && apt-get install -y \
 
 ## Optionally gives user sudo rights and sets as default user
 RUN adduser docker sudo && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+RUN chgrp staff /var/log/supervisor # tmp fix so we can run as docker user
 USER docker
 
