@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y \
     r-cran-expm \
 && install2.r --error \
     coda \
+    deSolve \
     emdbook \
     kernlab \
     MASS \
@@ -25,7 +26,7 @@ RUN apt-get update && apt-get install -y \
     modeest \
     pander \
     R2jags \
-    deSolve \
+    sde \
 && installGithub.r \
     cboettig/populationdynamics \
     cboettig/pdg_control \
