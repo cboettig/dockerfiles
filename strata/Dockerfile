@@ -1,11 +1,15 @@
-## Use as a base for ssh to run as an ssh image 
+## This is my general-purpose / convenience image. 
+
+## Most of my active but more mature projects provide their
+## own minimal Dockerfiles based on a robust public image (e.g. hadleyverse), 
+## providing a dockerfile that is more specific to the project and more stable.
+## This dockerfile changes as the basic tools I'm using day-to-day change
+## and should not be seen as a consistent base on which to extend anything
+
 FROM rocker/ropensci 
 MAINTAINER Carl Boettiger "cboettig@gmail.com"
 
 ## Install my packages
-## Note: these are for convenience / common use.  
-## Stongly suggested that mature projects provide their
-## own Dockerfiles based on a robust public image.  
 ## 
 RUN apt-get update && apt-get install -y \
     r-cran-R2jags \ 
