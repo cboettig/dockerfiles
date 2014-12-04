@@ -32,6 +32,7 @@ RUN apt-get update && apt-get install -y \
     cboettig/pdg_control \
     cboettig/nonparametric-bayes \
     jrnold/ggthemes \
+    sckott/analogsea \
 && install2.r --error --repos http://r-nimble.org nimble \
 && rm -rf /tmp/downloaded_packages
 
