@@ -1,6 +1,6 @@
-## proof of principle only
+## proof of principle only. Note: image must include git
 
-image: r-base:latest
+image: rocker/rstudio:latest
 script:
   - R --version 
 notify:
