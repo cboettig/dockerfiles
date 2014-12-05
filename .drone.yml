@@ -1,3 +1,5 @@
+## proof of principle only
+
 image: r-base:latest
 script:
   - R --version 
