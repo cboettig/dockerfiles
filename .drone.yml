@@ -1,0 +1,7 @@
+image: r-base:latest
+script:
+  - R --version 
+notify:
+  email:
+    recipients:
+      - cboettig@ropensci.org
