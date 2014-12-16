@@ -46,16 +46,22 @@ adduser --gecos '' $USER
 ## Grant the user superuser privileges
 echo "$USER ALL=(ALL:ALL) ALL" >> /etc/sudoers
 
+## Copy over authorized_keys and chown to user
+cp ~/.ssh/* /home/$USER/.ssh/ && chown -R $USER:$USER /home/$USER/.ssh
+
+addgroup $USER docker
+
+## Important: check now that you can log in as user over ssh, without pw,
+## and user has sudo power. 
+
+
 ## Now that we have a non-root user, Prevent any root login over ssh:
 sed -i 's/PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config
 ## Must explicitly declare this due to Ubuntu's default "UsePAM yes" 
 echo "PasswordAuthentication no" >> /etc/ssh/sshd_config
-
 ## Allow only our user to login:
 echo "UseDNS no" >> /etc/ssh/sshd_config
 echo "AllowUsers $USER" >> /etc/ssh/sshd_config
-
-
 ## Change the default ssh port
 sed -i "s/Port 22/Port $SSH/" /etc/ssh/sshd_config
 
@@ -98,7 +104,7 @@ apt-get install fail2ban
 ## Configure fail2ban
 cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
 # adjust [ssh] port section to monitor non-standard $SSH port in use.
-
+sed -i "s/^port * = ssh/port = $SSH/"    /etc/fail2ban/jail.conf
 
 ###################################################
 
@@ -151,8 +157,8 @@ docker run --name='rstudio' -d -p $RSTUDIO:8787 -e USER=$USER -e PASSWORD=$PASSW
 ## build drone image from source:
 git clone https://github.com/drone/drone.git
 docker build -t drone/drone drone/
-## Deploy Drone CI on 8080 (Then visit localhost:8080/install)
-docker run --name drone -d -p 88:80 \
+## Deploy Drone CI on 88 (Then visit localhost:88/install)
+docker run --name drone -d -p $DRONE:80 \
 -v /var/run/docker.sock:/var/run/docker.sock \
 -t \
 -e DRONE_GITHUB_CLIENT=$DRONE_GITHUB_CLIENT \
@@ -160,25 +166,38 @@ docker run --name drone -d -p 88:80 \
 drone/drone
 
 ## Deploy Gitlab: we need some data containers running first
+sudo mkdir /opt/postgresql
+sudo mkdir /opt/gitlab 
 docker run --name=postgresql -d \
   -e 'DB_NAME=gitlabhq_production' -e 'DB_USER=gitlab' -e 'DB_PASS=somepassword' \
-  -v /opt/postgresql/data:/var/lib/postgresql \
+  -v /opt/postgresql:/var/lib/postgresql \
   sameersbn/postgresql:latest
 docker run --name=redis -d sameersbn/redis:latest
+
 
 ## launch gitlab, linking to them containers:
 docker run --name=gitlab -d \
   --link postgresql:postgresql \
   --link redis:redisio \
   -p $GITLAB_WEB:80 -p $GITLAB_SSH:22 \
-  -v /opt/gitlab/data:/home/git/data \
-    sameersbn/gitlab:7.3.2-1
-# Specific version matters. versions get software updates without numbers changing.
-# Visit http://localhost:$GITLAB_WEB and login using the default username and password: root/5iveL!fe
+  -v /opt/gitlab:/home/git/data \
+    sameersbn/gitlab:7.5.1
+# Specific version matters. 
+# First time using gitlab: Visit http://localhost:$GITLAB_WEB and login using the default username and password: root/5iveL!fe
+# Otherwise: copy over backup file
 
 ## Deploy RStudio's shiny-server on 3838
-docker run -d -p $SHINY:3838 cboettig/shiny
+#docker run -d -p $SHINY:3838 cboettig/shiny
 
 ## Deploy OpenCPU on 443 
 #docker run -t -d -p 5080:8006 -p 443:8007 jeroenooms/opencpu-dev
+
+
+docker run --name registry -d -p 8080:8080 -e GUNICORN_OPTS=[--preload] registry:0.9.0
+# Needs my private registry dockerfile
+# docker build -t registry-nginx ~/registry-nginx
+docker run --name registry-nginx -d --net container:registry registry-nginx 
+
+
+
 
