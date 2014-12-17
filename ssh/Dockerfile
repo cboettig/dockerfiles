@@ -19,12 +19,6 @@
 # that is added to the image here.  However, that user doesn't have root access since we haven't
 # provided a password.  
 # 
-# Use nsenter to enter the instance: 
-#
-#     docker run -v /usr/local/bin:/target jpetazzo/nsenter
-#     nsenter -m -u -n -i -p -t `docker inspect --format '{{.State.Pid}}' ssh` /bin/bash
-# 
-#
 # Create a password for the user to enable root access: 
 # 
 #    echo '$USER:<password>' | chpasswd
@@ -44,6 +38,7 @@ MAINTAINER Carl Boettiger "cboettig@gmail.com"
 
 ENV USER cboettig 
 
+## Create user and SSH deamon environment
 RUN apt-get update && apt-get install -y openssh-server
 RUN mkdir /var/run/sshd
 RUN adduser --disabled-password --gecos "" $USER 
@@ -51,7 +46,20 @@ RUN adduser $USER sudo
 ADD authorized_keys /home/$USER/.ssh/authorized_keys
 RUN chown $USER /home/$USER/.ssh/authorized_keys
 
-## Should we configure /etc/ssh/sshd_config PermitRootLogin, or AllowUsers?
+## Prevent root login, ssh-key only, whitelist users only
+RUN sed -i 's/PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config \
+&& echo "PasswordAuthentication no" >> /etc/ssh/sshd_config \
+&& echo "UseDNS no" >> /etc/ssh/sshd_config \
+&& echo "AllowUsers $USER" >> /etc/ssh/sshd_config 
+
+## Should we add user to root?
+RUN adduser $USER sudo && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+
+## Convenience
+RUN echo '"\e[5~": history-search-backward' >> /etc/inputrc && echo '"\e[6~": history-search-backward' >> /etc/inputrc
+
+RUN apt-get update && apt-get install -y git
 
 EXPOSE 22
 CMD    ["/usr/sbin/sshd", "-D"]
