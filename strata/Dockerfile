@@ -36,7 +36,21 @@ RUN apt-get update && apt-get install -y \
 && install2.r --error --repos http://r-nimble.org nimble \
 && rm -rf /tmp/downloaded_packages
 
-
 ## Optionally gives user sudo rights and sets as default user
 RUN adduser docker sudo && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+## Development environment ##
+
+RUN apt-get update && apt-get install -y vim-pathogen \
+&& cd /home/docker && mkdir .vim && mkdir .vim/bundle \
+&& cd /home/docker/.vim/bundle \
+&& git clone https://github.com/tpope/vim-sensible.git \
+&& git clone https://github.com/vim-pandoc/vim-pandoc.git \
+&& git clone https://github.com/vim-pandoc/vim-pandoc-syntax.git \
+&& git clone https://github.com/vim-pandoc/vim-rmarkdown.git \
+&& git clone https://github.com/altercation/vim-colors-solarized.git \
+&& cd
+
+COPY vimrc /home/docker/.vimrc
+
 
