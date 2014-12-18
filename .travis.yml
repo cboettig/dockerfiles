@@ -20,8 +20,8 @@ install:
   - git clone git://github.com/cptactionhank/sekexe
 
 before_script:
-  - "sekexe/run 'mount -t tmpfs -o size=8g tmpfs /var/lib/docker && docker -d -H tcp://0.0.0.0:2375' &"
-  - "while ! docker info &> /dev/null ; do sleep 1; done"
+  - "VERBOSE=true sekexe/run 'mount -t tmpfs -o size=8g tmpfs /var/lib/docker && docker -d -H tcp://0.0.0.0:2375' &"
+  - "while ! docker info &> /dev/null ; do sleep 1; echo 'tick'; done"
   - docker pull busybox:latest
 
 script:
