@@ -4,7 +4,6 @@ FLAGS=--no-cache
 
 pull:
 	docker pull r-base
-	docker pull rocker/r-base
 	docker pull rocker/r-devel
 	docker pull rocker/rstudio
 	docker pull rocker/hadleyverse
@@ -13,7 +12,6 @@ pull:
 	docker pull cboettig/strata
 	docker pull cboettig/nonparametric-bayes
 	docker pull cboettig/pdg-control
-	docker pull cboettig/bce
 
 
 all:

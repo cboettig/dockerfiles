@@ -53,4 +53,4 @@ RUN apt-get update && apt-get install -y vim-pathogen \
 
 COPY vimrc /home/docker/.vimrc
 
-
+ENTRYPOINT ["/bin/bash"]

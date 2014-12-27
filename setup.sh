@@ -9,8 +9,9 @@ USER=${USER:=rstudio}
 PASSWORD=${PASSWORD:=rstudio}
 GITLAB_WEB=${GITLAB_WEB:=10080}
 GITLAB_SSH=${GITLAB_SSH:=10022}
-DRONE=${DRONE:=8080}
+DRONE=${DRONE:=88}
 SHINY=${SHINY:=3838}
+R_REPO=${R_REPO:=5555}
 
 ## NOTE! Assumes login configured with SSH keys. see:
 ## https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2
@@ -186,18 +187,22 @@ docker run --name=gitlab -d \
 # First time using gitlab: Visit http://localhost:$GITLAB_WEB and login using the default username and password: root/5iveL!fe
 # Otherwise: copy over backup file
 
-## Deploy RStudio's shiny-server on 3838
-#docker run -d -p $SHINY:3838 cboettig/shiny
-
-## Deploy OpenCPU on 443 
-#docker run -t -d -p 5080:8006 -p 443:8007 jeroenooms/opencpu-dev
-
+## R repo
+cd r-repo
+./build.sh
+docker build -t r-repo r-repo
+docker run -d -p $R_REPO:80 r-repo
 
 docker run --name registry -d -p 8080:8080 -e GUNICORN_OPTS=[--preload] registry:0.9.0
 # Needs my private registry dockerfile
 # docker build -t registry-nginx ~/registry-nginx
 docker run --name registry-nginx -d --net container:registry registry-nginx 
 
+
+## Deploy RStudio's shiny-server on 3838
+#docker run -d -p $SHINY:3838 cboettig/shiny
+## Deploy OpenCPU on 443 
+#docker run -t -d -p 5080:8006 -p 443:8007 jeroenooms/opencpu-dev
 
 
 
