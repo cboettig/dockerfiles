@@ -41,7 +41,7 @@ RUN adduser docker sudo && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 ## Development environment ##
 
-RUN apt-get update && apt-get install -y vim-pathogen \
+RUN apt-get update && apt-get install -y vim-gtk vim-pathogen \
 && cd /home/docker && mkdir .vim && mkdir .vim/bundle \
 && cd /home/docker/.vim/bundle \
 && git clone https://github.com/tpope/vim-sensible.git \
