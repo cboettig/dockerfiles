@@ -37,8 +37,8 @@ set history=10000	" How many lines of history to remember
 set cf	      		" enable error files and error jumping
 
 "" yanked text can be pasted into another vim file using shift+insert 
-" set clipboard+=unnamed " shares windows clipboard
-" set clipboard=autoselect,unnamed,exclude:cons\|linux
+"set clipboard=unnamedplus " shares windows clipboard
+set clipboard=autoselect,unnamed,exclude:cons\|linux
 set ffs=unix,mac,dos " support all three filetypes, in this order
 
 set viminfo+=! " make sure it can save viminfo

@@ -17,6 +17,6 @@ RUN adduser docker sudo \
 
 USER docker
 WORKDIR /data
-RUN bundle install 
+RUN sudo bundle install 
 
 CMD Rscript -e 'servr::jekyll(dir = "_site-source/", host = "0.0.0.0")'
