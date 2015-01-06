@@ -3,16 +3,17 @@
 FLAGS=--no-cache
 
 pull:
-	docker pull r-base
-	docker pull rocker/r-devel
-	docker pull rocker/rstudio
-	docker pull rocker/hadleyverse
+	docker pull cboettig/labnotebook
+	docker pull rocker/hadleyverse:latest
 	docker pull rocker/ropensci
-	docker pull rocker/rstudio-daily
+	docker pull rocker/rstudio-daily:latest
+	docker pull rocker/rstudio-daily:verse
 	docker pull cboettig/strata
 	docker pull cboettig/nonparametric-bayes
 	docker pull cboettig/pdg-control
-
+	docker pull r-base
+	docker pull rocker/r-devel
+	docker pull rocker/rstudio
 
 all:
 	$(MAKE) rocker 

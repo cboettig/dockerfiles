@@ -6,11 +6,10 @@
 ## This dockerfile changes as the basic tools I'm using day-to-day change
 ## and should not be seen as a consistent base on which to extend anything
 
-FROM rocker/ropensci 
+FROM rocker/rstudio
 MAINTAINER Carl Boettiger "cboettig@gmail.com"
 
 ## Install my packages
-## 
 RUN apt-get update && apt-get install -y \
     r-cran-R2jags \ 
     r-cran-snowfall \
@@ -36,8 +35,8 @@ RUN apt-get update && apt-get install -y \
 && install2.r --error --repos http://r-nimble.org nimble \
 && rm -rf /tmp/downloaded_packages
 
-## Optionally gives user sudo rights and sets as default user
-RUN adduser docker sudo && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+## Gives user sudo rights 
+echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 ## Development environment ##
 
