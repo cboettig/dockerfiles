@@ -34,7 +34,7 @@ RUN apt-get update && apt-get install -y \
     jrnold/ggthemes \
     sckott/analogsea \
 		docopt/docopt.R \
-&& install2.r --error -r http://r-nimble.org -r http://cran.rstudio.com nimble \
+&& install2.r --error -r http://r-nimble.org nimble \
 && rm -rf /tmp/downloaded_packages
 
 ## Gives user sudo rights 
