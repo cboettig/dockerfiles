@@ -26,13 +26,15 @@ RUN apt-get update && apt-get install -y \
     pander \
     R2jags \
     sde \
+		igraph \
 && installGithub.r \
     cboettig/populationdynamics \
     cboettig/pdg_control \
     cboettig/nonparametric-bayes \
     jrnold/ggthemes \
     sckott/analogsea \
-&& install2.r --error --repos http://r-nimble.org nimble \
+		docopt/docopt.R \
+&& install2.r --error -r http://r-nimble.org -r http://cran.rstudio.com nimble \
 && rm -rf /tmp/downloaded_packages
 
 ## Gives user sudo rights 
