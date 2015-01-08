@@ -6,7 +6,7 @@
 ## This dockerfile changes as the basic tools I'm using day-to-day change
 ## and should not be seen as a consistent base on which to extend anything
 
-FROM rocker/rstudio
+FROM rocker/hadleyverse
 MAINTAINER Carl Boettiger "cboettig@gmail.com"
 
 ## Install my packages
