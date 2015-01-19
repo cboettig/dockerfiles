@@ -1,8 +1,10 @@
 FROM haskell:latest
 RUN cabal update \
-	&& cabal install \
+	&& cabal install --prefix=/opt/cabal \
 		pandoc \
-		pandoc-citeproc
+		pandoc-citeproc \
+  && chown -R root:staff /opt/cabal 
 ENV PATH $PATH:/root/.cabal/bin
+
 
 CMD ["pandoc"]
