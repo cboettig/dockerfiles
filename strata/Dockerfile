@@ -10,8 +10,10 @@ FROM cboettig/2015
 MAINTAINER Carl Boettiger "cboettig@gmail.com"
 
 ## Vim environment ##
-RUN apt-get update && apt-get install -y vim-pathogen \
-&& cd /home/rstudio && mkdir .vim && mkdir .vim/bundle \
+USER root
+RUN apt-get update && apt-get install -y vim-pathogen 
+USER rstudio
+RUN cd /home/rstudio && mkdir .vim && mkdir .vim/bundle \
 && cd /home/rstudio/.vim/bundle \
 && git clone https://github.com/tpope/vim-sensible.git \
 && git clone https://github.com/vim-pandoc/vim-pandoc.git \
@@ -19,7 +21,7 @@ RUN apt-get update && apt-get install -y vim-pathogen \
 && git clone https://github.com/vim-pandoc/vim-rmarkdown.git \
 && git clone https://github.com/altercation/vim-colors-solarized.git \
 && cd
-COPY vimrc /home/rstudio/.vimrc
 
+COPY vimrc /home/rstudio/.vimrc
 
 CMD ["/bin/bash"]
