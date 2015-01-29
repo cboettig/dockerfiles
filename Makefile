@@ -37,11 +37,11 @@ ropensci: ~/Documents/code/ropensci/docker/ropensci/Dockerfile
 ropensci-dev: ~/Documents/code/ropensci/docker/ropensci-dev/Dockerfile
 	docker build $(FLAGS) -t rocker/ropensci:dev ~/Documents/code/ropensci/docker/ropensci-dev/
 
-strata: ~/Documents/code/dockerfiles/strata/Dockerfile
-	docker build $(FLAGS) -t cboettig/strata ~/Documents/code/dockerfiles/strata/
+strata: ~/Documents/code/cboettig/dockerfiles/strata/Dockerfile
+	docker build $(FLAGS) -t cboettig/strata ~/Documents/code/cboettig/dockerfiles/strata/
 
 labnotebook: ~/Documents/lab-notebook/cboettig.github.io/_build/Dockerfile 
-	docker build $(FLAGS) -t cboettig/labnotebook ~/Documents/lab-notebook/cboettig.github.io/_build/Dockerfile 
+	docker build $(FLAGS) -t cboettig/labnotebook ~/Documents/lab-notebook/cboettig.github.io/_build/
 
 
 r-base: ~/Documents/code/rocker-org/rocker/r-base/Dockerfile
