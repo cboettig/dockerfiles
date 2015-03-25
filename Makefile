@@ -8,13 +8,15 @@ pull:
 	docker pull rocker/rstudio
 	docker pull rocker/r-devel
 	docker pull rocker/ropensci
-	docker pull rocker/hadleyverse:latest
+	docker pull rocker/ropensci:dev
+	docker pull rocker/hadleyverse
 	docker pull cboettig/labnotebook
 	docker pull cboettig/strata
 	docker pull cboettig/nonparametric-bayes
 	docker pull cboettig/pdg-control
 	docker pull rocker/rstudio-daily:latest
 	docker pull rocker/rstudio-daily:verse
+	docker pull cboettig/2015
 
 all:
 	$(MAKE) rocker 
