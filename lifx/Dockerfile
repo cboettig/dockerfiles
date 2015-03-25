@@ -1,5 +1,6 @@
 # For some reason this isn't working when dockerized. Works fine 
-# only when run in foreground natively.
+# only when run in foreground natively. Probably needs to be told to 
+# use host 0.0.0.0 instead of 127.0.0.1
 # 
 # use: 
 # run in deamonized:
