@@ -1,12 +1,5 @@
 #!/bin/bash
-
-## Add binaries for more CRAN packages, deb-src repositories in case we need `apt-get build-dep`
-echo 'deb http://debian-r.debian.net/debian-r/ unstable main' >> /etc/apt/sources.list \
-  && gpg --keyserver keyserver.ubuntu.com --recv-keys AE05705B842492A68F75D64E01BF7284B26DD379 \
-  && gpg --export AE05705B842492A68F75D64E01BF7284B26DD379  | apt-key add - \
-  && echo 'deb-src http://debian-r.debian.net/debian-r/ unstable main' >> /etc/apt/sources.list \
-  && echo 'deb-src http://http.debian.net/debian testing main' >> /etc/apt/sources.list
-
+set -e
 
 apt-get update \
   && apt-get install -y --no-install-recommends \
@@ -33,7 +26,7 @@ apt-get update \
     build-essential \
     default-jdk \
     default-jre \
-    libcairo2-dev/unstable \
+    libcairo2-dev \
     libgsl0-dev \
     libmysqlclient-dev \
     libpq-dev \
@@ -44,7 +37,7 @@ apt-get update \
     r-cran-rgl \
     r-cran-rsqlite.extfuns \
     vim \
-  && R CMD javareconf \
+  & R CMD javareconf \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/
 
@@ -65,8 +58,6 @@ install2.r --error \
     testthat \
     tidyr \
     shiny \
-## Manually install (useful packages from) the SUGGESTS list of the above packages.
-## (because --deps TRUE can fail when packages are added/removed from CRAN)
 && Rscript -e 'source("http://bioconductor.org/biocLite.R"); biocLite("BiocInstaller")' \
 && install2.r --error \
     base64enc \
