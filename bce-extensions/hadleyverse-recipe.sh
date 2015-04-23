@@ -99,6 +99,6 @@ install2.r --error --repo http://cran.rstudio.com \
     rstudio/rticles \
     jimhester/covr \
     ramnathv/htmlwidgets \
-  && r -e 'source("http://bioconductor.org/biocLite.R"); biocLite("BiocInstaller")' \
+    && R -e 'library("utils"); source("http://bioconductor.org/biocLite.R"); biocLite("BiocInstaller")' \
   && rm -rf /tmp/downloaded_packages/ /tmp/*.rds
 
