@@ -12,8 +12,8 @@ if [ "$USER" = root ]
 fi
 
 ## Set defaults for environmental variables in case they are undefined
-USER=${USER:=rstudio}
-PASSWORD=${PASSWORD:=rstudio}
+USER=${USER:=$BCE_USER}
+PASSWORD=${PASSWORD:=$BCE_USER}
 EMAIL=${EMAIL:=rstudio@example.com}
 USERID=${USERID:=1000}
 ROOT=${ROOT:=FALSE}
@@ -27,19 +27,10 @@ if [ "$USERID" -ne 1000 ]
 		useradd -m $USER -u $USERID
 		mkdir /home/$USER
 		chown -R $USER /home/$USER
-else
-	## RENAME the existing user. (because deleting a user can be trouble, i.e. if we're logged in as that user)
-	usermod -l $USER rstudio
-	usermod -m -d /home/$USER $USER 
-	groupmod -n $USER rstudio 
-	echo "USER is now $USER"
 fi
-## Assing password to user
-echo "$USER:$PASSWORD" | chpasswd
 
-## Configure git for the User. Since root is running this script, cannot use `git config`
-echo -e "[user]\n\tname = $USER\n\temail = $EMAIL\n\n[credential]\n\thelper = cache\n\n[push]\n\tdefault = simple\n\n[core]\n\teditor = vim\n" > /home/$USER/.gitconfig
-echo ".gitconfig written for $USER"
+## Assign a password to user; required to log into RStudio-server
+echo "$USER:$PASSWORD" | chpasswd
 
 ## Let user write to /usr/local/lib/R/site.library
 addgroup $USER staff
