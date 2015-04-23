@@ -21,7 +21,7 @@ apt-get update \
   && mktexlsr \
   && updmap-sys
 
-## Install some external dependencies. 360 MB
+## Install some external dependencies. 
 apt-get update \
   && apt-get install -y --no-install-recommends \
     build-essential \
@@ -40,9 +40,8 @@ apt-get update \
     vim \
   && R CMD javareconf 
 
-## Install the R packages. 210 MB
-r -e 'source("http://bioconductor.org/biocLite.R"); biocLite("BiocInstaller")' \
-  && install2.r --error --repo http://cran.rstudio.com \
+## Install the R packages.
+install2.r --error --repo http://cran.rstudio.com \
     devtools \
     dplyr \
     ggplot2 \
@@ -100,5 +99,6 @@ r -e 'source("http://bioconductor.org/biocLite.R"); biocLite("BiocInstaller")' \
     rstudio/rticles \
     jimhester/covr \
     ramnathv/htmlwidgets \
+  && r -e 'source("http://bioconductor.org/biocLite.R"); biocLite("BiocInstaller")' \
   && rm -rf /tmp/downloaded_packages/ /tmp/*.rds
 
