@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+## Tex configuration for inconsolata fonts needed to build R package manuals. ick.
 apt-get update \
   && apt-get install -y --no-install-recommends \
     ghostscript \
@@ -37,12 +38,11 @@ apt-get update \
     r-cran-rgl \
     r-cran-rsqlite.extfuns \
     vim \
-  & R CMD javareconf \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/
+  && R CMD javareconf 
 
 ## Install the R packages. 210 MB
-install2.r --error \
+r -e 'source("http://bioconductor.org/biocLite.R"); biocLite("BiocInstaller")' \
+  && install2.r --error --repo http://cran.rstudio.com \
     devtools \
     dplyr \
     ggplot2 \
@@ -58,8 +58,6 @@ install2.r --error \
     testthat \
     tidyr \
     shiny \
-&& Rscript -e 'source("http://bioconductor.org/biocLite.R"); biocLite("BiocInstaller")' \
-&& install2.r --error \
     base64enc \
     Cairo \
     codetools \
@@ -94,7 +92,7 @@ install2.r --error \
     testit \
     V8 \
     XML \
-&& installGithub.r \
+  && installGithub.r \
     hadley/lineprof \
     hadley/xml2 \
     hadley/purrr \
@@ -102,5 +100,5 @@ install2.r --error \
     rstudio/rticles \
     jimhester/covr \
     ramnathv/htmlwidgets \
-&& rm -rf /tmp/downloaded_packages/ /tmp/*.rds
+  && rm -rf /tmp/downloaded_packages/ /tmp/*.rds
 
