@@ -1,13 +1,7 @@
 #!/bin/bash
+set -e
 
-## Add binaries for more CRAN packages, deb-src repositories in case we need `apt-get build-dep`
-echo 'deb http://debian-r.debian.net/debian-r/ unstable main' >> /etc/apt/sources.list \
-  && gpg --keyserver keyserver.ubuntu.com --recv-keys AE05705B842492A68F75D64E01BF7284B26DD379 \
-  && gpg --export AE05705B842492A68F75D64E01BF7284B26DD379  | apt-key add - \
-  && echo 'deb-src http://debian-r.debian.net/debian-r/ unstable main' >> /etc/apt/sources.list \
-  && echo 'deb-src http://http.debian.net/debian testing main' >> /etc/apt/sources.list
-
-
+## Tex configuration for inconsolata fonts needed to build R package manuals. ick.
 apt-get update \
   && apt-get install -y --no-install-recommends \
     ghostscript \
@@ -27,13 +21,13 @@ apt-get update \
   && mktexlsr \
   && updmap-sys
 
-## Install some external dependencies. 360 MB
+## Install some external dependencies. 
 apt-get update \
   && apt-get install -y --no-install-recommends \
     build-essential \
     default-jdk \
     default-jre \
-    libcairo2-dev/unstable \
+    libcairo2-dev \
     libgsl0-dev \
     libmysqlclient-dev \
     libpq-dev \
@@ -44,12 +38,10 @@ apt-get update \
     r-cran-rgl \
     r-cran-rsqlite.extfuns \
     vim \
-  && R CMD javareconf \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/
+  && R CMD javareconf 
 
-## Install the R packages. 210 MB
-install2.r --error \
+## Install the R packages.
+install2.r --error --repo http://cran.rstudio.com \
     devtools \
     dplyr \
     ggplot2 \
@@ -65,10 +57,6 @@ install2.r --error \
     testthat \
     tidyr \
     shiny \
-## Manually install (useful packages from) the SUGGESTS list of the above packages.
-## (because --deps TRUE can fail when packages are added/removed from CRAN)
-&& Rscript -e 'source("http://bioconductor.org/biocLite.R"); biocLite("BiocInstaller")' \
-&& install2.r --error \
     base64enc \
     Cairo \
     codetools \
@@ -103,7 +91,7 @@ install2.r --error \
     testit \
     V8 \
     XML \
-&& installGithub.r \
+  && installGithub.r \
     hadley/lineprof \
     hadley/xml2 \
     hadley/purrr \
@@ -111,5 +99,6 @@ install2.r --error \
     rstudio/rticles \
     jimhester/covr \
     ramnathv/htmlwidgets \
-&& rm -rf /tmp/downloaded_packages/ /tmp/*.rds
+    && R -e 'library("utils"); source("http://bioconductor.org/biocLite.R"); biocLite("BiocInstaller")' \
+  && rm -rf /tmp/downloaded_packages/ /tmp/*.rds
 

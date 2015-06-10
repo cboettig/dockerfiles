@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e 
 
 ## Download and install RStudio server & dependencies
 ## Attempts to get detect latest version, otherwise falls back to version given in $VER
