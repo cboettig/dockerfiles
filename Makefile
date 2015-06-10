@@ -17,6 +17,7 @@ pull:
 	docker pull rocker/rstudio-daily:latest
 	docker pull rocker/rstudio-daily:verse
 	docker pull cboettig/2015
+	docker pull cboettig/bce
 
 all:
 	$(MAKE) rocker 
