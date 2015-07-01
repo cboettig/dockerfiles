@@ -4,15 +4,6 @@
 # Here we just set a few defaults. You ought to set these 
 
 SSH=${SSH:=22}
-RSTUDIO=${RSTUDIO:=8787}
-USER=${USER:=rstudio}
-PASSWORD=${PASSWORD:=rstudio}
-GITLAB_WEB=${GITLAB_WEB:=10080}
-GITLAB_SSH=${GITLAB_SSH:=10022}
-DRONE=${DRONE:=88}
-SHINY=${SHINY:=3838}
-R_REPO=${R_REPO:=5555}
-
 ## NOTE! Assumes login configured with SSH keys. see:
 ## https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2
 
@@ -37,8 +28,7 @@ chmod 0600 /swapfile      # redundant?
 ##################################################
 
 # Install the latest version of Docker 
-curl -sSL https://get.docker.io/ubuntu/ | sh
-
+wget -qO- https://get.docker.com/ | sh
 
 ##################################################
 
@@ -48,7 +38,8 @@ adduser --gecos '' $USER
 echo "$USER ALL=(ALL:ALL) ALL" >> /etc/sudoers
 
 ## Copy over authorized_keys and chown to user
-cp ~/.ssh/* /home/$USER/.ssh/ && chown -R $USER:$USER /home/$USER/.ssh
+
+cp -r /root/.ssh /home/$USER/ && chown -R $USER:$USER /home/$USER/.ssh
 
 addgroup $USER docker
 
@@ -64,7 +55,7 @@ echo "PasswordAuthentication no" >> /etc/ssh/sshd_config
 echo "UseDNS no" >> /etc/ssh/sshd_config
 echo "AllowUsers $USER" >> /etc/ssh/sshd_config
 ## Change the default ssh port
-sed -i "s/Port 22/Port $SSH/" /etc/ssh/sshd_config
+#sed -i "s/Port 22/Port $SSH/" /etc/ssh/sshd_config
 
 ## NOTE! We'll need to use this on all future ssh calls, e.g.:
 ##    ssh -p $SSH $USER@ip-addreess
@@ -72,40 +63,33 @@ sed -i "s/Port 22/Port $SSH/" /etc/ssh/sshd_config
 
 
 ## Reload to implement the new settings
-reload ssh
+systemctl restart ssh
+#reload ssh
 
 
 ####################################################
 
 ## Install UFW -- Uncomplicated firewall configuration
-apt-get install ufw
+apt-get update && apt-get -y install ufw fail2ban
 
 ## Docker needs to ufw to allow forwarding and port 2375
-sed -i s/DEFAULT_FORWARD_POLICY=\"DROP\"/DEFAULT_FORWARD_POLICY=\"ACCEPT\"/ /etc/default/ufw
+#sed -i s/DEFAULT_FORWARD_POLICY=\"DROP\"/DEFAULT_FORWARD_POLICY=\"ACCEPT\"/ /etc/default/ufw
 ufw reload
 ufw allow 2375/tcp
 
 ## Allow ports for these services: 
-ufw allow $SSH/tcp
-ufw allow $RSTUDIO/tcp
+ufw allow 22/tcp
+ufw allow 80/tcp
 
 ufw enable
-## Other services I might run: 
-#ufw allow $GITLAB-SSH/tcp
-#ufw allow $GITLAB-WEB/tcp
-#ufw allow $DRONE/tcp
-#ufw allow $SHINY/tcp
-
 
 ###################################################
 
 ## Install fail2ban
-apt-get install fail2ban 
-
-## Configure fail2ban
-cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+## Configure fail2ban if ssh not 22
+#cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
 # adjust [ssh] port section to monitor non-standard $SSH port in use.
-sed -i "s/^port * = ssh/port = $SSH/"    /etc/fail2ban/jail.conf
+# sed -i "s/^port * = ssh/port = $SSH/"    /etc/fail2ban/jail.conf
 
 ###################################################
 
@@ -133,76 +117,7 @@ apt-get autoremove -y
 
 ## Install some useful tools: 
 apt-get install -y \
-  git \     # we'll use below to install certain things
-  vnstat    # Monitors network use (1 TB/month free on small instances)
-
-
-###########################################
-
-## Install nsenter: -- not needed now, docker 1.3 has docker exec -it <containerid> bash
-# docker run -v /usr/local/bin:/target jpetazzo/nsenter
-## alias appropriately
-# echo 'function dock { sudo nsenter -m -u -n -i -p -t `docker inspect --format {{.State.Pid}} "$1"` /bin/bash; }' >> ~/.bashrc
-
-
-# Launch containerized services: 
-
-## Deploy RStudio on 8787 (with rich R environment installed)
-docker run --name='rstudio' -d -p $RSTUDIO:8787 -e USER=$USER -e PASSWORD=$PASSWORD rocker/ropensci
-
-## Configure additional users on the image:
-# dock rstudio
-# useradd -m $USER && echo "$USER:$PASSWORD" | chpasswd
-# chown -R $USER:$USER /home/$USER
-
-## build drone image from source:
-git clone https://github.com/drone/drone.git
-docker build -t drone/drone drone/
-## Deploy Drone CI on 88 (Then visit localhost:88/install)
-docker run --name drone -d -p $DRONE:80 \
--v /var/run/docker.sock:/var/run/docker.sock \
--t \
--e DRONE_GITHUB_CLIENT=$DRONE_GITHUB_CLIENT \
--e DRONE_GITHUB_SECRET=$DRONE_GITHUB_SECRET \
-drone/drone
-
-## Deploy Gitlab: we need some data containers running first
-sudo mkdir /opt/postgresql
-sudo mkdir /opt/gitlab 
-docker run --name=postgresql -d \
-  -e 'DB_NAME=gitlabhq_production' -e 'DB_USER=gitlab' -e 'DB_PASS=somepassword' \
-  -v /opt/postgresql:/var/lib/postgresql \
-  sameersbn/postgresql:latest
-docker run --name=redis -d sameersbn/redis:latest
-
-
-## launch gitlab, linking to them containers:
-docker run --name=gitlab -d \
-  --link postgresql:postgresql \
-  --link redis:redisio \
-  -p $GITLAB_WEB:80 -p $GITLAB_SSH:22 \
-  -v /opt/gitlab:/home/git/data \
-    sameersbn/gitlab:7.5.1
-# Specific version matters. 
-# First time using gitlab: Visit http://localhost:$GITLAB_WEB and login using the default username and password: root/5iveL!fe
-# Otherwise: copy over backup file
-
-## R repo
-cd r-repo
-./build.sh
-docker build -t r-repo r-repo
-docker run -d -p $R_REPO:80 r-repo
-
-docker run --name registry -d -p 8080:8080 -e GUNICORN_OPTS=[--preload] registry:0.9.0
-# Needs my private registry dockerfile
-# docker build -t registry-nginx ~/registry-nginx
-docker run --name registry-nginx -d --net container:registry registry-nginx 
-
-
-## Deploy RStudio's shiny-server on 3838
-#docker run -d -p $SHINY:3838 cboettig/shiny
-## Deploy OpenCPU on 443 
-#docker run -t -d -p 5080:8006 -p 443:8007 jeroenooms/opencpu-dev
-
-
+  git \
+  vnstat \
+  vim 
 
