@@ -9,7 +9,7 @@ RUN echo 'deb http://debian-r.debian.net/debian-r/ unstable main' >> /etc/apt/so
 
 ## Note that ssh is also required! http://www.open-mpi.org/community/lists/users/2010/07/13503.php
 RUN apt-get update \
-  && apt-get build-dep r-cran-rmpi \
+  && apt-get build-dep -y r-cran-rmpi \
   && apt-get -y install ssh
 
 ## Chris recommends openmpi >= 1.8.5 in place of ubuntu stock repos
