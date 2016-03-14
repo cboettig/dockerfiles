@@ -3,4 +3,11 @@ sudo: required
 services:
   - docker
 
+## Make sure all containers build without error.
+before_install: 
+  - docker build -t cboettig/octave octave
 
+## A few simple / crude tests
+script:
+  - docker run -ti cboettig/octave octave --version
+ 
