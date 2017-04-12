@@ -11,12 +11,13 @@ RUN apt-get update && apt-get -y install --no-install-recommends \
   libfftw3-dev \
   libv8-3.14-dev \
   libxslt-dev \
-  && install2.r --error -r $MRAN \
+  && install2.r --error \
     FKF \
     MDPtoolbox \
     seewave \
     nimble \
     remotes \
+  && R -e "remotes::install_github(c('rstudio/blogdown', 'hadley/pkgdown'), upgrade = FALSE)" \
   # Save me from configuring this each time
   && git config --system user.name 'Carl Boettiger' \
   && git config --system user.email 'cboettig@gmail.com'
