@@ -17,6 +17,7 @@ RUN apt-get update && apt-get -y install --no-install-recommends \
     seewave \
     nimble \
     remotes \
+  && R -e "remotes::install_github(c('rstudio/blogdown', 'hadley/pkgdown'), upgrade = FALSE)" \
   # Save me from configuring this each time
   && git config --system user.name 'Carl Boettiger' \
   && git config --system user.email 'cboettig@gmail.com'
