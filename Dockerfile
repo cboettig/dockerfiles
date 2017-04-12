@@ -11,7 +11,7 @@ RUN apt-get update && apt-get -y install --no-install-recommends \
   libfftw3-dev \
   libv8-3.14-dev \
   libxslt-dev \
-  && install2.r --error -r $MRAN \
+  && install2.r --error \
     FKF \
     MDPtoolbox \
     seewave \
