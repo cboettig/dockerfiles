@@ -1,4 +1,4 @@
-FROM cboettig/labnotebook:3.3.1 
+FROM cboettig/verse:3.3.1 
 MAINTAINER Carl Boettiger cboettig@ropensci.org 
 
 ## Install additional R package dependencies ###
