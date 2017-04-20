@@ -18,8 +18,8 @@ RUN apt-get update && apt-get -y install --no-install-recommends \
     nimble \
     remotes \
   && R -e "remotes::install_github(c('rstudio/blogdown', 'hadley/pkgdown'), upgrade = FALSE)" \
+  && echo '\n options(blogdown.hugo.dir = "/usr/local/lib/")' >> /usr/local/lib/R/etc/Rprofile.site \
   && R -e "blogdown::install_hugo()" \
-  && mv /root/bin/hugo /usr/local/bin/hugo \
   # Save me from configuring this each time
   && git config --system user.name 'Carl Boettiger' \
   && git config --system user.email 'cboettig@gmail.com'
