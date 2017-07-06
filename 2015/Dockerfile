@@ -6,6 +6,7 @@ RUN apt-get update && apt-get -y install  --no-install-recommends \
   libopenblas-dev \
   liblapack-dev \
   librsvg2-dev \
+  libnlopt-dev \
   libudunits2-dev \
   libsndfile1-dev \
   libfftw3-dev \
@@ -20,30 +21,31 @@ RUN apt-get update && apt-get -y install  --no-install-recommends \
   && install2.r --error \
      -r "http://www.bioconductor.org/packages/release/bioc" \
      -r "http://cran.rstudio.com" \
-     FKF \
+     bbmle \
+     DiagrammeR \
      dlm \
+     drc \
+     downloader \
+     EML \
+     FastGP \
+     FKF \
+     geiger \
+     igraph \
      KFAS \
+     knitcitations \
      mcmc \
      MDPtoolbox \
-     igraph \
-     sde \
-     FastGP \
-     rbenchmark \
-     PVAClone \
-     triangle \
-     bbmle \
-     nlstools \
-     drc \
-     RNeXML \
-     geiger \
-     phytools \
      nimble \
-     DiagrammeR \
-     servr \
-     knitcitations \
+     nlstools \
+     phytools \
+     PVAClone \
+     rbenchmark \
+     rJava \
      rfishbase \
      RNeXML \
-     EML \
+     sde \
+     servr \
+     triangle \
   && installGithub.r \
     cboettig/earlywarning \
     cboettig/pdg_control \
