@@ -46,7 +46,7 @@ RUN apt-get update && apt-get -y install  --no-install-recommends \
      sde \
      servr \
      triangle \
-  && installGithub.r \
+  && installGithub.r --dep TRUE \
     cboettig/earlywarning \
     cboettig/pdg_control \
     cboettig/multiple_uncertainty \
