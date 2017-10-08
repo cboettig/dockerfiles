@@ -2,11 +2,18 @@ Basic use
 ----------
 
 Link to the current working directory in order to run latex commands on files therein.
-Specify the desired tex commands following the container name, for instance:
+Specify the desired commands following the container name, for instance
 
 ```
-docker run -v $(pwd):/data -i --rm cboettig/texlive pdflatex foo.tex
+docker run -v $(pwd):/data -ti --rm cboettig/texlive pdflatex foo.tex
 ```
+
+or simply
+
+```
+docker run -v $(pwd):/data -ti --rm cboettig/texlive bash
+```
+
 
 Linking
 ------
